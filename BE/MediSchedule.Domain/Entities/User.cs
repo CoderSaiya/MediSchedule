@@ -11,4 +11,5 @@ public class User : BaseEntity
     public UserStatus Status { get; set; } = UserStatus.Active;
     
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }
