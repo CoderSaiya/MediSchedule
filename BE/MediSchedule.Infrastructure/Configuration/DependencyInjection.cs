@@ -1,0 +1,57 @@
+﻿using MediSchedule.Application.Interface;
+using MediSchedule.Domain.Interfaces;
+using MediSchedule.Infrastructure.Data;
+using MediSchedule.Infrastructure.Data.Repositories;
+using MediSchedule.Infrastructure.Persistence;
+using MediSchedule.Infrastructure.Services;
+using System.Reflection;
+using MediatR;
+using MediSchedule.Infrastructure.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace MediSchedule.Infrastructure.Configuration;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(
+                    connectionString: configuration.GetConnectionString("DefaultConnection"),
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    }),
+            contextLifetime: ServiceLifetime.Scoped,
+            optionsLifetime: ServiceLifetime.Singleton);
+        
+        services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+        
+       services.AddScoped<IPatientRepository, PatientRepository>();
+       services.AddScoped<IDoctorRepository, DoctorRepository>();
+       services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+       services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+       services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
+       services.AddScoped<IUserRepository, UserRepository>();
+       services.AddScoped<ISlotRepository, SlotRepository>();
+       services.AddScoped<INotificationRepository, NotificationRepository>();
+       services.AddScoped<IProfileRepository, ProfileRepository>();
+       services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
+       
+       services.AddSingleton<IBlobService, AzureBlobService>();
+       services.AddScoped<IAuthService, AuthService>();
+        
+        return services;
+    }
+    
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        return services;
+    }
+}
