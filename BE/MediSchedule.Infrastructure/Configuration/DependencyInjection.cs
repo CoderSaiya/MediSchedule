@@ -1,7 +1,7 @@
 ﻿using MediSchedule.Application.Interface;
 using MediSchedule.Domain.Interfaces;
-using MediSchedule.Infrastructure.Data;
-using MediSchedule.Infrastructure.Data.Repositories;
+using MediSchedule.Infrastructure.Persistence.Data;
+using MediSchedule.Infrastructure.Persistence.Data.Repositories;
 using MediSchedule.Infrastructure.Persistence;
 using MediSchedule.Infrastructure.Services;
 using System.Reflection;
@@ -19,7 +19,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(
-                    connectionString: configuration.GetConnectionString("DefaultConnection"),
+                    connectionString: configuration["ConnectionStrings:DefaultConnection"],
                     sqlServerOptionsAction: sqlOptions =>
                     {
                         sqlOptions.EnableRetryOnFailure(
@@ -42,6 +42,7 @@ public static class DependencyInjection
        services.AddScoped<INotificationRepository, NotificationRepository>();
        services.AddScoped<IProfileRepository, ProfileRepository>();
        services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
+       services.AddScoped<IRefreshRepository, RefreshRepository>();
        
        services.AddSingleton<IBlobService, AzureBlobService>();
        services.AddScoped<IAuthService, AuthService>();

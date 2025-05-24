@@ -1,8 +1,7 @@
 ﻿using MediSchedule.Domain.Entities;
 using MediSchedule.Domain.Interfaces;
-using MediSchedule.Infrastructure.Persistence;
 
-namespace MediSchedule.Infrastructure.Data.Repositories;
+namespace MediSchedule.Infrastructure.Persistence.Data.Repositories;
 
 public class ProfileRepository(AppDbContext context) : GenericRepository<Profile>(context), IProfileRepository
 {

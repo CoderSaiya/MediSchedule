@@ -1,7 +1,7 @@
 ﻿using MediSchedule.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace MediSchedule.Infrastructure.Persistence;
+namespace MediSchedule.Infrastructure.Persistence.Data;
 
 public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
 {
@@ -21,5 +21,26 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasDiscriminator<string>("Role")
+                .HasValue<Patient>("Patient")
+                .HasValue<Doctor>("Doctor")
+                .HasValue<User>("User")
+                .HasValue<Admin>("Admin");
+        });
+
+        modelBuilder.Entity<Appointment>(a =>
+        {
+            a.HasOne(x => x.Doctor)
+                .WithMany(x => x.Appointments)
+                .HasForeignKey(x => x.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            a.HasOne(x => x.Patient)
+                .WithMany()
+                .HasForeignKey(x => x.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }

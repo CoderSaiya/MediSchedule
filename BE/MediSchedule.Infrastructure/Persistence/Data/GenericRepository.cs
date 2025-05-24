@@ -1,9 +1,8 @@
 ﻿using System.Linq.Expressions;
 using MediSchedule.Domain.Interfaces;
-using MediSchedule.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace MediSchedule.Infrastructure.Data;
+namespace MediSchedule.Infrastructure.Persistence.Data;
 
 public class GenericRepository<T>(AppDbContext context) : IRepository<T> where T : class
 {

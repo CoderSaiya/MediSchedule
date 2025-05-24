@@ -3,7 +3,7 @@ using MediSchedule.Domain.Interfaces;
 using MediSchedule.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace MediSchedule.Infrastructure.Data.Repositories;
+namespace MediSchedule.Infrastructure.Persistence.Data.Repositories;
 
 public class RefreshRepository(AppDbContext context) : IRefreshRepository
 {
