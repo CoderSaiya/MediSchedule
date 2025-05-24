@@ -1,4 +1,5 @@
 using MediSchedule.Infrastructure.Configuration;
+using MediSchedule.Infrastructure.Hubs;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<ChatHub>("/hubs/chats");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
