@@ -46,6 +46,7 @@ public static class DependencyInjection
        
        services.AddSingleton<IBlobService, AzureBlobService>();
        services.AddScoped<IAuthService, AuthService>();
+       services.AddScoped<IMailService, MailService>();
         
         return services;
     }
