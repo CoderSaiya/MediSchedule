@@ -47,6 +47,8 @@ public static class DependencyInjection
        services.AddSingleton<IBlobService, AzureBlobService>();
        services.AddScoped<IAuthService, AuthService>();
        services.AddScoped<IMailService, MailService>();
+       services.AddScoped<INotificationService, NotificationService>();
+       services.AddScoped<IChatService, ChatService>();
 
        services.AddScoped<IUnitOfWork, UnitOfWork>();
         
@@ -56,6 +58,8 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        
+        services.AddSignalR();
         return services;
     }
 }
