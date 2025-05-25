@@ -26,12 +26,12 @@ public class ScheduleAppointmentHandler(
             throw new Exception("Slot is not available");
         
         var alreadyBooked = await appointmentRepository
-            .GetByPredicateAsync(a =>
+            .ExistsAsync(a =>
                 a.SlotId == request.Appointment.SlotId &&
                 a.PatientId == request.Appointment.PatientId
             );
         
-        if (alreadyBooked is not null)
+        if (alreadyBooked)
             throw new Exception("You are already booked this slot");
         
         await appointmentRepository.AddAsync(request.Appointment);
