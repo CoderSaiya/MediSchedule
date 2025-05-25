@@ -1,3 +1,4 @@
+using MediSchedule.Application.UseCases.Authentication.Command;
 using MediSchedule.Infrastructure.Configuration;
 using MediSchedule.Infrastructure.Hubs;
 using Microsoft.OpenApi.Models;
@@ -36,7 +37,16 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(
+        typeof(Program).Assembly,
+        typeof(RegisterCommand).Assembly
+    );
+});
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -44,13 +54,16 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.MapControllers();
+
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.MapHub<ChatHub>("/hubs/chats");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
