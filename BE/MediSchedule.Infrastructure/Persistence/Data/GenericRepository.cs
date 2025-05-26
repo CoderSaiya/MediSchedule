@@ -55,7 +55,7 @@ public class GenericRepository<T>(AppDbContext context) : IRepository<T> where T
         if (e != null) context.Set<T>().Remove(e);
     }
 
-    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate) =>
+    public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate) =>
         await context.Set<T>().AnyAsync(predicate);
 
     public async Task<bool> ExistsAsync(Guid id) =>
