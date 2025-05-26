@@ -17,7 +17,7 @@ public class SpecialtyController(IMediator mediator) : Controller
     {
         var specialties = await mediator.Send(new GetSpecialtiesQuery(filter));
         
-        return Ok(GlobalResponse<IEnumerable<Specialty>>.Success(specialties));
+        return Ok(GlobalResponse<IEnumerable<SpecialtyResponse>>.Success(specialties));
     }
     
     [HttpPost]
