@@ -29,7 +29,17 @@ public class SpecialtyController(IMediator mediator) : Controller
                 new CreateSpecialtyCommand(new Specialty
                 {
                     Name = createSpecialty.Name,
-                    Description = createSpecialty.Description
+                    Description = createSpecialty.Description,
+                    Icon = createSpecialty.Icon,
+                    Color = createSpecialty.Color,
+                    BackgroundColor = createSpecialty.BackgroundColor,
+                    BorderColor = createSpecialty.BorderColor,
+                    Amount = createSpecialty.Amount,
+                    AverageTime = createSpecialty.AverageTime,
+                    PatientsSatisfied = createSpecialty.PatientsSatisfied,
+                    WaitTime = createSpecialty.WaitTime,
+                    IsAvailable = createSpecialty.IsAvailable,
+                    FeaturesCsv = createSpecialty.Features
                 }));
             
             return Ok(GlobalResponse<string>.Success("Specialty created successfully"));

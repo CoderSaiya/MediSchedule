@@ -12,4 +12,5 @@ public class Doctor : User
     public string Biography { get; set; } = null!;
     
     public ICollection<Slot> Slots { get; set; } = new List<Slot>();
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }
