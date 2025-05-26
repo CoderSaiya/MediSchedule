@@ -10,6 +10,7 @@ public class CreateDoctorHandler(
     IDoctorRepository doctorRepository,
     IUserRepository userRepository,
     ISlotRepository slotRepository,
+    IProfileRepository profileRepository,
     ISpecialtyRepository specialtyRepository,
     IAuthService authService,
     IUnitOfWork unitOfWork
@@ -19,16 +20,14 @@ public class CreateDoctorHandler(
     {
         var req = cmd.Request;
         
-        if (await doctorRepository.ExistsAsync(d => d.LicenseNumber == req.LicenseNumber))
-            throw new Exception("License number already in use.");
-        
-        if (await userRepository.ExistsAsync(u => u.Username == req.Username || u.Email == req.Email))
-            throw new Exception("Username or Email already taken.");
-        
+        if (await userRepository.ExistsAsync(u => u.Email == req.Email) || 
+            await userRepository.ExistsAsync(u => u.Username == req.Username))
+            throw new Exception("User already exist");
         if (!await specialtyRepository.ExistsAsync(s => s.Id == req.SpecialtyId))
             throw new Exception("Specialty doesn't exist.");
         
         var slots = req.Slots;
+        
         for (int i = 0; i < slots.Count; i++)
         {
             if (slots[i].EndTime <= slots[i].StartTime)
@@ -40,15 +39,19 @@ public class CreateDoctorHandler(
                 bool overlap = slots[i].StartTime < slots[j].EndTime
                             && slots[j].StartTime < slots[i].EndTime;
                 if (overlap)
-                    throw new Exception($"Slot {i+1} overlaps with slot {j+1}.");
+                    throw new Exception($"Slot {i+1} overlaps with date {slots[j].Day} slot {j+1}.");
             }
         }
         
         foreach (var s in slots)
         {
             bool conflict = await slotRepository.ExistsAsync(ex =>
+                ex.Doctor.SpecialtyId == req.SpecialtyId &&
+                ex.Day == s.Day &&
                 ex.StartTime < s.EndTime &&
                 s.StartTime < ex.EndTime);
+            
+            Console.WriteLine("CMM" + conflict);
             if (conflict)
                 throw new Exception(
                   $"New slot {s.StartTime:yyyy-MM-dd HH:mm} – {s.EndTime:HH:mm} " +
@@ -65,12 +68,20 @@ public class CreateDoctorHandler(
             Biography = req.Biography
         };
         await doctorRepository.AddAsync(doctor);
+
+        var profile = new Profile
+        {
+            UserId = doctor.Id,
+            FullName = req.FullName,
+        };
+        await profileRepository.AddAsync(profile);
         
         foreach (var s in slots)
         {
             var slotEntity = new Slot
             {
                 Doctor = doctor,
+                Day = s.Day,
                 StartTime = s.StartTime,
                 EndTime = s.EndTime,
                 IsAvailable = true
