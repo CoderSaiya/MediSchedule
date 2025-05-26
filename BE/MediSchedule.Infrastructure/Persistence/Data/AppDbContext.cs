@@ -42,5 +42,15 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
+        
+        modelBuilder.Entity<Doctor>()
+            .HasMany(d => d.Slots)
+            .WithOne(s => s.Doctor)
+            .HasForeignKey(s => s.DoctorId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Slot>()
+            .HasIndex(s => s.DoctorId)
+            .IsUnique(false);
     }
 }
