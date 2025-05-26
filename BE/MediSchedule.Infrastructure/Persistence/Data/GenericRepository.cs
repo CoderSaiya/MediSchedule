@@ -6,16 +6,16 @@ namespace MediSchedule.Infrastructure.Persistence.Data;
 
 public class GenericRepository<T>(AppDbContext context) : IRepository<T> where T : class
 {
-    public async Task<T?> GetByIdAsync(Guid id) => 
+    public virtual async Task<T?> GetByIdAsync(Guid id) => 
         await context.Set<T>().FindAsync(id);
 
-    public async Task<IEnumerable<T>> ListAsync() => await context.Set<T>().ToListAsync();
+    public virtual async Task<IEnumerable<T>> ListAsync() => await context.Set<T>().ToListAsync();
 
-    public async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate) =>
+    public virtual async Task<IEnumerable<T>> ListAsync(Expression<Func<T, bool>> predicate) =>
         await context.Set<T>().Where(predicate).ToListAsync();
 
 
-    public async Task<IEnumerable<T>> ListAsync<TFilter>(TFilter filter)
+    public virtual async Task<IEnumerable<T>> ListAsync<TFilter>(TFilter filter)
         where TFilter : class
     {
         IQueryable<T> query = context.Set<T>();
@@ -58,6 +58,6 @@ public class GenericRepository<T>(AppDbContext context) : IRepository<T> where T
     public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate) =>
         await context.Set<T>().AnyAsync(predicate);
 
-    public async Task<bool> ExistsAsync(Guid id) =>
+    public virtual async Task<bool> ExistsAsync(Guid id) =>
         await context.Set<T>().FindAsync(id) is not null;
 }
