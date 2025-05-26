@@ -16,23 +16,24 @@ public class RegisterHandler(
 {
     public async Task<Guid> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var existingUser = await userRepository.GetByEmailAsync(request.Email);
-        if (existingUser != null)
+        if (await userRepository.ExistsAsync(u => u.Email == request.Email))
             throw new Exception("User with this email already exists.");
+        if (await userRepository.ExistsAsync(u => u.Username == request.Username))
+            throw new Exception("User with this Username already exists.");
         
         var passwordHash = authService.HashPassword(request.Password);
         
-        User user = new User
+        Patient patient = new Patient
         {
             Username = request.Username,
             Email = request.Email,
             Password = passwordHash,
         };
-        await userRepository.AddAsync(user);
+        await userRepository.AddAsync(patient);
         
         Profile profile = new Profile
         {
-            UserId = user.Id,
+            UserId = patient.Id,
             FullName = request.FullName,
         };
         await profileRepository.AddAsync(profile);
@@ -75,7 +76,7 @@ public class RegisterHandler(
                 
                 <p>Để bắt đầu, hãy nhấn vào nút bên dưới để đăng nhập và trải nghiệm:</p>
                 
-                <a href='https://medischedule.example.com/login' class='button'>Đăng nhập ngay</a>
+                <a href='http://localhost:3000/login' class='button'>Đăng nhập ngay</a>
                 
                 <div class='footer'>
                     <p>Nếu cần hỗ trợ, vui lòng liên hệ đội ngũ chăm sóc khách hàng tại <a href='mailto:sonysam.contacts@gmail.com'>support@sonysam.contacts@gmail.com</a></p>
@@ -86,13 +87,13 @@ public class RegisterHandler(
         </html>";
         
         await mailService.SendEmailAsync(
-            user.Email,
+            patient.Email,
             "🎉 Đăng ký tài khoản thành công",
             emailBody
         );
         
         await unitOfWork.CommitAsync();
 
-        return user.Id;
+        return patient.Id;
     }
 }
