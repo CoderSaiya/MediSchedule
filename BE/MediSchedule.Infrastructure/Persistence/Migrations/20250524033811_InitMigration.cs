@@ -291,7 +291,8 @@ namespace MediSchedule.Infrastructure.Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Slots_DoctorId",
                 table: "Slots",
-                column: "DoctorId");
+                column: "DoctorId"
+                );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_SpecialtyId",
