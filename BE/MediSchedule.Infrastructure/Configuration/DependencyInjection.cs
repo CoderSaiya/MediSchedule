@@ -49,6 +49,7 @@ public static class DependencyInjection
        services.AddScoped<IMailService, MailService>();
        services.AddScoped<INotificationService, NotificationService>();
        services.AddScoped<IChatService, ChatService>();
+       services.AddScoped<IPaymentGateway, MomoGateway>();
 
        services.AddScoped<IUnitOfWork, UnitOfWork>();
         

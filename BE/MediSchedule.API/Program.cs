@@ -1,4 +1,5 @@
 using MediSchedule.Application.UseCases.Authentication.Command;
+using MediSchedule.Domain.Common;
 using MediSchedule.Infrastructure.Configuration;
 using MediSchedule.Infrastructure.Hubs;
 using Microsoft.OpenApi.Models;
@@ -47,6 +48,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+builder.Services.Configure<MomoOptions>(builder.Configuration.GetSection("MoMo"));
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
