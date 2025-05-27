@@ -20,4 +20,10 @@ public class SpecialtyRepository(AppDbContext context) : GenericRepository<Speci
 
         return await q.ToListAsync();
     }
+
+    public override async Task<IEnumerable<Specialty>> ListAsync() =>
+        await context.Specialties
+            .Include(s => s.Doctors)
+            .ThenInclude(d => d.Profile)
+            .ToListAsync();
 }

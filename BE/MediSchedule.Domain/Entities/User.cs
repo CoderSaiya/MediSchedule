@@ -10,6 +10,7 @@ public class User : BaseEntity
     public string Password { get; set; } = null!;
     public UserStatus Status { get; set; } = UserStatus.Active;
     
+    public Profile? Profile { get; set; }
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }

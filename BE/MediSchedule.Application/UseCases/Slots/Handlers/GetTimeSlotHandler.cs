@@ -21,6 +21,7 @@ public class GetTimeSlotHandler(
         return slots
             .OrderBy(s => s.StartTime)
             .Select(s => new TimeSlotResponse(
+                Id: s.Id,
                 Time: s.StartTime.ToString(@"hh\:mm"),
                 IsBooked: bookedTimes.Contains(s.StartTime) || !s.IsAvailable
                 ))

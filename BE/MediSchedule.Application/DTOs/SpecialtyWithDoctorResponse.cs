@@ -1,7 +1,8 @@
 ﻿namespace MediSchedule.Application.DTOs;
 
 public record SpecialtyWithDoctorResponse(
+    Guid Id,
     string Name,
-    string[] DoctorNames,
+    DoctorDto[] DoctorNames,
     double Amount
     );

@@ -20,6 +20,14 @@ public class SpecialtyController(IMediator mediator) : Controller
         return Ok(GlobalResponse<IEnumerable<SpecialtyResponse>>.Success(specialties));
     }
     
+    [HttpGet("with-doctors")]
+    public async Task<IActionResult> GetSpecialtiesWithDoctor()
+    {
+        var specialties = await mediator.Send(new GetSpecialtiesWithDoctorQuery());
+        
+        return Ok(GlobalResponse<IEnumerable<SpecialtyWithDoctorResponse>>.Success(specialties));
+    }
+    
     [HttpPost]
     public async Task<IActionResult> CreateSpecialties([FromBody] CreateSpecialty createSpecialty)
     {
