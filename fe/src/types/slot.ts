@@ -1,0 +1,10 @@
+export interface TimeSlot {
+    id: string;
+    time: string;
+    isBooked: boolean;
+}
+
+export interface GetTimeSlotsParams {
+    doctorId: string
+    date: string // Format: YYYY-MM-DD
+}
