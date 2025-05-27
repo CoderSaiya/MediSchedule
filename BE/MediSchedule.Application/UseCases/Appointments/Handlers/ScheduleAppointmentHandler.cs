@@ -27,8 +27,7 @@ public class ScheduleAppointmentHandler(
         
         var alreadyBooked = await appointmentRepository
             .ExistsAsync(a =>
-                a.SlotId == request.Appointment.SlotId &&
-                a.PatientId == request.Appointment.PatientId
+                a.SlotId == request.Appointment.SlotId
             );
         
         if (alreadyBooked)
@@ -37,24 +36,16 @@ public class ScheduleAppointmentHandler(
         await appointmentRepository.AddAsync(request.Appointment);
         
         await mediator.Send(new BlockSlotCommand(slot.Id), cancellationToken);
-        
-        var notificationPatient = new Notification
-        {
-            UserId = request.Appointment.PatientId,
-            Content = "You have booked this appointment at " +
-                      $"{slot.StartTime:yyyy-MM-dd HH:mm} to {slot.EndTime:yyyy-MM-dd HH:mm}.",
-        };
 
         var notificationDoctor = new Notification
         {
             UserId = request.Appointment.DoctorId,
-            Content = $"Patient with ID {request.Appointment.PatientId} has scheduled an appointment from " +
+            Content = $"Patient has scheduled an appointment from " +
                       $"{slot.StartTime:yyyy-MM-dd HH:mm} to {slot.EndTime:yyyy-MM-dd HH:mm}."
         };
         
-        await notificationRepository.AddAsync(notificationPatient);
+        await notificationRepository.AddAsync(notificationDoctor);
 
-        await notificationService.PushNotificationAsync(notificationPatient.UserId.ToString(), notificationPatient);
         await notificationService.PushNotificationAsync(notificationDoctor.UserId.ToString(), notificationDoctor);
         
         await unitOfWork.CommitAsync();

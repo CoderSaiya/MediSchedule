@@ -27,9 +27,10 @@ public class AppointmentController(IMediator mediator) : Controller
         {
             var appointment = new Appointment
             {
-                PatientId = request.PatientId,
                 DoctorId = request.DoctorId,
                 SlotId = request.SlotId,
+                AppointmentDate = request.AppointmentDate,
+                AppointmentTime = TimeSpan.Parse(request.AppointmentTime),
                 Reason = request.Reason,
             };
             

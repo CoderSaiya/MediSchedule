@@ -37,11 +37,6 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
                 .WithMany(x => x.Appointments)
                 .HasForeignKey(x => x.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            a.HasOne(x => x.Patient)
-                .WithMany()
-                .HasForeignKey(x => x.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
         
         modelBuilder.Entity<Doctor>()

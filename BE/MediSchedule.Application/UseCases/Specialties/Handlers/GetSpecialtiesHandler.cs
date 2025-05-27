@@ -73,6 +73,8 @@ public class GetSpecialtiesHandler(ISpecialtyRepository specialtyRepository) : I
         var nextOccurrence = GetNextOccurrence(slot.Day, slot.StartTime);
         return nextOccurrence.Date == DateTime.Today
             ? $"Hôm nay, {nextOccurrence:HH:mm}"
-            : $"{nextOccurrence:dd/MM}, {nextOccurrence:HH:mm}";
+            : nextOccurrence.Date == DateTime.Today.AddDays(1)
+                ? $"Ngày mai, {nextOccurrence:HH:mm}"
+                : nextOccurrence.ToString("dd/MM/yyyy HH:mm");
     }
 }

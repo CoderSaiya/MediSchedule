@@ -47,4 +47,12 @@ public class SlotRepository(AppDbContext context) : GenericRepository<Slot>(cont
         
         return await query.ToListAsync();
     }
+
+    public async Task<IEnumerable<Slot>> GetSlotsByDoctorAsync(Guid doctorId, DayOfWeek day)
+    {
+        return await _context.Slots
+            .Where(s => s.DoctorId == doctorId && s.Day == day)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

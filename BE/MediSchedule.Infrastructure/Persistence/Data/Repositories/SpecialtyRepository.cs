@@ -11,7 +11,9 @@ public class SpecialtyRepository(AppDbContext context) : GenericRepository<Speci
 
     public async Task<IEnumerable<Specialty>> ListAsync(SpecialtyFilter filter)
     {
-        IQueryable<Specialty> q = _context.Specialties.Include(s => s.Doctors);
+        IQueryable<Specialty> q = _context.Specialties
+            .Include(s => s.Doctors)
+            .ThenInclude(d => d.Slots);
 
         if (!string.IsNullOrEmpty(filter.Name))
             q = q.Where(s => EF.Functions.Like(s.Name, $"%{filter.Name}%"));
