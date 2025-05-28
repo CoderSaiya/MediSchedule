@@ -7,5 +7,8 @@ public record UpdateProfileRequest(
     string? PhoneNumber,
     string? Address,
     string? Dob,
+    Guid? SpecialtyId,
+    string? LicenseNumber,
+    string? Biography,
     IFormFile? Avatar
     );

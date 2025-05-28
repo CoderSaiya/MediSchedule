@@ -32,4 +32,20 @@ public class AzureBlobService : IBlobService
         
         return blobClient.Uri.ToString();
     }
+    
+    public async Task DeleteFileAsync(string fileUrl)
+    {
+        var uri = new Uri(fileUrl);
+        var segments = uri.AbsolutePath.TrimStart('/').Split('/');
+        if (segments.Length < 2)
+            throw new ArgumentException("The file URL is invalid.");
+
+        var containerName = segments[0];
+        var blobName = string.Join('/', segments.Skip(1));
+
+        var container = _blobClient.GetBlobContainerClient(containerName);
+        var blobClient = container.GetBlobClient(blobName);
+
+        await blobClient.DeleteIfExistsAsync();
+    }
 }

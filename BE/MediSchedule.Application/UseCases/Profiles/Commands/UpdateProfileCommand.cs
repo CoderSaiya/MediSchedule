@@ -1,7 +1,10 @@
 ﻿using MediatR;
-using MediSchedule.Domain.Entities;
+using MediSchedule.Application.DTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace MediSchedule.Application.UseCases.Profiles.Commands;
 
-public record UpdateProfileCommand(Profile Profile, IFormFile? AvatarFile) : IRequest<Unit>;
+public record UpdateProfileCommand(
+    Guid UserId,
+    UpdateProfileRequest Request
+    ) : IRequest<Unit>;

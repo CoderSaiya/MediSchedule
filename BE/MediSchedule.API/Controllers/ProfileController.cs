@@ -26,16 +26,7 @@ public class ProfileController(IMediator mediator) : Controller
         [FromRoute] Guid userId,
         [FromForm] UpdateProfileRequest dto)
     {
-        var profile = new Profile
-        {
-            UserId = userId,
-            FullName = dto.FullName,
-            PhoneNumber = dto.PhoneNumber,
-            Address = dto.Address,
-            Dob = dto.Dob
-        };
-
-        await mediator.Send(new UpdateProfileCommand(profile, dto.Avatar));
-        return NoContent();
+        await mediator.Send(new UpdateProfileCommand(userId, dto));
+        return Ok(GlobalResponse<string>.Success("Profile updated"));
     }
 }
