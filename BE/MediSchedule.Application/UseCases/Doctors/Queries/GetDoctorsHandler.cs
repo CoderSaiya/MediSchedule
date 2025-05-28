@@ -1,7 +1,6 @@
 ﻿using MediatR;
-using MediSchedule.Domain.Entities;
-using MediSchedule.Domain.Specifications;
+using MediSchedule.Application.DTOs;
 
 namespace MediSchedule.Application.UseCases.Doctors.Queries;
 
-public record GetDoctorsQuery(DoctorFilter Filter) : IRequest<IEnumerable<Doctor>>;
+public record GetDoctorsQuery() : IRequest<IEnumerable<DoctorResponse>>;
