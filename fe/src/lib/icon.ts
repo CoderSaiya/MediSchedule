@@ -13,6 +13,9 @@ import {
     TrendingUp,
     Activity,
     Zap,
+    Phone,
+    Video,
+    BriefcaseMedical,
 } from "lucide-react"
 import React from "react";
 
@@ -31,4 +34,7 @@ export const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = 
     TrendingUp,
     Activity,
     Zap,
+    Phone,
+    Video,
+    BriefcaseMedical,
 }
