@@ -50,6 +50,10 @@ public static class DependencyInjection
        services.AddScoped<INotificationService, NotificationService>();
        services.AddScoped<IChatService, ChatService>();
        services.AddScoped<IPaymentGateway, MomoGateway>();
+       
+       services.AddHttpClient<IPaymentGateway, MomoGateway>(client => {
+       });
+
 
        services.AddScoped<IUnitOfWork, UnitOfWork>();
         

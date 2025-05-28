@@ -21,4 +21,11 @@ public class PaymentController(IPaymentGateway paymentGateway) : Controller
             return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
         }
     }
+    
+    [HttpGet("status/{orderId}")]
+    public async Task<IActionResult> GetStatus(string orderId)
+    {
+        var status = await paymentGateway.CheckPaymentStatusAsync(orderId);
+        return Ok(status);
+    }
 }

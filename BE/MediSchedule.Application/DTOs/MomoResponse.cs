@@ -3,9 +3,11 @@
 public record MomoResponse(
     int ResultCode,
     string Message,
-    string OrderId,
+    string? OrderId,
     string RequestId,
     string PayUrl,
     string Deeplink,
-    string QrCodeUrl
+    string QrCodeUrl,
+    string? Status,
+    string? LocalMessage
     );
