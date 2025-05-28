@@ -1,6 +1,9 @@
-﻿namespace MediSchedule.Application.DTOs;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace MediSchedule.Application.DTOs;
 
 public record CreateDoctorRequest(
+    IFormFile AvatarFile,
     string FullName,
     string Username,
     string Password,

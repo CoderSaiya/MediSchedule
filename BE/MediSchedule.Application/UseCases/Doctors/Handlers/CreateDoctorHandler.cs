@@ -13,6 +13,7 @@ public class CreateDoctorHandler(
     IProfileRepository profileRepository,
     ISpecialtyRepository specialtyRepository,
     IAuthService authService,
+    IBlobService blobService,
     IUnitOfWork unitOfWork
     ) : IRequestHandler<CreateDoctorCommand, Unit>
 {
@@ -69,10 +70,13 @@ public class CreateDoctorHandler(
         };
         await doctorRepository.AddAsync(doctor);
 
+        var url = await blobService.UploadFileAsync("avatars", req.AvatarFile);
+
         var profile = new Profile
         {
             UserId = doctor.Id,
             FullName = req.FullName,
+            AvatarUrl = url
         };
         await profileRepository.AddAsync(profile);
         
