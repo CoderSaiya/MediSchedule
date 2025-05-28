@@ -29,14 +29,17 @@ public class AppointmentController(IMediator mediator) : Controller
             {
                 DoctorId = request.DoctorId,
                 SlotId = request.SlotId,
-                AppointmentDate = request.AppointmentDate,
+                FullName = request.PatientName,
+                Phone = request.PatientPhone,
+                Email = request.PatientEmail,
+                AppointmentDate = DateTime.Parse(request.AppointmentDate),
                 AppointmentTime = TimeSpan.Parse(request.AppointmentTime),
                 Reason = request.Reason,
             };
             
             await mediator.Send(new ScheduleAppointmentCommand(appointment));
             
-            return Ok(GlobalResponse<string>.Success("Appointment registered"));
+            return Ok(GlobalResponse<Guid>.Success(appointment.Id));
         }
         catch (Exception ex)
         {

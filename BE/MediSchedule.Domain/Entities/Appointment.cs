@@ -14,7 +14,10 @@ public class Appointment : BaseEntity
     public Guid SlotId { get; set; }
     [ForeignKey("SlotId")]
     public Slot Slot { get; set; } = null!;
-    
+
+    public string FullName { get; set; } = null!;
+    public string Phone { get; set; } = null!;
+    public string Email { get; set; } = null!;
     public DateTime AppointmentDate { get; set; }
     public TimeSpan AppointmentTime { get; set; }
     
