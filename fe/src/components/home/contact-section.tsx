@@ -34,7 +34,7 @@ export default function ContactSection() {
     ]
 
     return (
-        <section className="py-20 bg-white">
+        <section data-section="contact" className="py-20 bg-white">
             <div className="container mx-auto px-4 max-w-7xl">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-bold text-gray-900 mb-4">Liên hệ với chúng tôi</h2>

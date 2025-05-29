@@ -45,13 +45,25 @@ export function Header() {
                         Bác sĩ
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-500 transition-all group-hover:w-full"></span>
                     </Link>
-                    <Link
-                        href="/services"
+                    <button
+                        onClick={() => {
+                            setIsOpen(false)
+                            if (window.location.pathname === "/") {
+                                setTimeout(() => {
+                                    const serviceSection = document.querySelector('[data-section="services"]')
+                                    if (serviceSection) {
+                                        serviceSection.scrollIntoView({ behavior: "smooth" })
+                                    }
+                                }, 100)
+                            } else {
+                                window.location.href = "/#service"
+                            }
+                        }}
                         className="text-sm font-medium text-slate-700 hover:text-teal-600 transition-colors relative group"
                     >
                         Dịch vụ
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-500 transition-all group-hover:w-full"></span>
-                    </Link>
+                    </button>
                     <Link
                         href="/about"
                         className="text-sm font-medium text-slate-700 hover:text-teal-600 transition-colors relative group"
@@ -59,13 +71,25 @@ export function Header() {
                         Về chúng tôi
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-500 transition-all group-hover:w-full"></span>
                     </Link>
-                    <Link
-                        href="/contact"
+                    <button
+                        onClick={() => {
+                            setIsOpen(false)
+                            if (window.location.pathname === "/") {
+                                setTimeout(() => {
+                                    const contactSection = document.querySelector('[data-section="contact"]')
+                                    if (contactSection) {
+                                        contactSection.scrollIntoView({ behavior: "smooth" })
+                                    }
+                                }, 100)
+                            } else {
+                                window.location.href = "/#contact"
+                            }
+                        }}
                         className="text-sm font-medium text-slate-700 hover:text-teal-600 transition-colors relative group"
                     >
                         Liên hệ
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-500 transition-all group-hover:w-full"></span>
-                    </Link>
+                    </button>
                 </nav>
 
                 <div className="hidden md:flex items-center space-x-6">

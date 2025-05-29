@@ -3,14 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import {
-    Heart,
-    Brain,
-    Eye,
-    Bone,
-    Baby,
-    Stethoscope,
     Clock,
     Users,
     Star,
@@ -152,7 +145,7 @@ export default function ServicesSection() {
     // ]
 
     return (
-        <section className="py-24 bg-gradient-to-b from-white to-teal-50 relative overflow-hidden">
+        <section data-section="services" className="py-24 bg-gradient-to-b from-white to-teal-50 relative overflow-hidden">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-30">
                 <div
