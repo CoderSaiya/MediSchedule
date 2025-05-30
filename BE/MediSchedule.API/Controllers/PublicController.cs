@@ -19,8 +19,9 @@ public class PublicController(IMediator mediator): Controller
     }
 
     [HttpPost("storage/{appointmentId}")]
+    [Consumes("multipart/form-data")]
     public async Task<IActionResult> GetStorage(
-        [FromBody] StorageRequest storageRequest,
+        [FromForm] StorageRequest storageRequest,
         [FromRoute] Guid? appointmentId = null
         )
     {

@@ -8,6 +8,14 @@ public class AppointmentRepository(AppDbContext context) : GenericRepository<App
 {
     private readonly AppDbContext _context = context;
 
+    public async Task<Appointment?> GetByIdAsync(Guid id)
+    {
+        return await _context.Appointments
+            .Include(a => a.Doctor)
+            .ThenInclude(d => d.Profile)
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
     public async Task<IEnumerable<TimeSpan>> GetBookedTimesAsync(Guid doctorId, DateTime date)
     {
         return await _context.Appointments
