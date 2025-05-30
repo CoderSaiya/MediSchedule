@@ -20,6 +20,7 @@ public class Appointment : BaseEntity
     public string Email { get; set; } = null!;
     public DateTime AppointmentDate { get; set; }
     public TimeSpan AppointmentTime { get; set; }
+    public string? FileUrl { get; set; }
     
     public string Reason { get; set; } = null!;
     
