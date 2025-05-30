@@ -21,7 +21,7 @@ public class AppointmentController(IMediator mediator) : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> Register([FromBody] CreateAppointmentRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateAppointmentRequest request)
     {
         try
         {

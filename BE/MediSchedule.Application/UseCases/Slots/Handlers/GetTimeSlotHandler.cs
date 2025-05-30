@@ -23,7 +23,7 @@ public class GetTimeSlotHandler(
             .Select(s => new TimeSlotResponse(
                 Id: s.Id,
                 Time: s.StartTime.ToString(@"hh\:mm"),
-                IsBooked: bookedTimes.Contains(s.StartTime) || !s.IsAvailable
+                IsBooked: bookedTimes.Contains(s.StartTime)
                 ))
             .ToList();
     }

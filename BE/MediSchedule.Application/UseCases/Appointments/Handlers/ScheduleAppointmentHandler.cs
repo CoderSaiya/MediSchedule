@@ -22,12 +22,14 @@ public class ScheduleAppointmentHandler(
         if (slot is null)
             throw new Exception("Slot not found");
         
-        if (!slot.IsAvailable)
-            throw new Exception("Slot is not available");
+        // if (!slot.IsAvailable)
+        //     throw new Exception("Slot is not available");
         
+        var date = request.Appointment.AppointmentDate.Date;
         var alreadyBooked = await appointmentRepository
             .ExistsAsync(a =>
                 a.SlotId == request.Appointment.SlotId
+                && a.AppointmentDate.Date == date
             );
         
         if (alreadyBooked)
@@ -35,18 +37,18 @@ public class ScheduleAppointmentHandler(
         
         await appointmentRepository.AddAsync(request.Appointment);
         
-        await mediator.Send(new BlockSlotCommand(slot.Id), cancellationToken);
+        // await mediator.Send(new BlockSlotCommand(slot.Id), cancellationToken);
 
-        var notificationDoctor = new Notification
-        {
-            UserId = request.Appointment.DoctorId,
-            Content = $"Patient has scheduled an appointment from " +
-                      $"{slot.StartTime:yyyy-MM-dd HH:mm} to {slot.EndTime:yyyy-MM-dd HH:mm}."
-        };
-        
-        await notificationRepository.AddAsync(notificationDoctor);
-
-        await notificationService.PushNotificationAsync(notificationDoctor.UserId.ToString(), notificationDoctor);
+        // var notificationDoctor = new Notification
+        // {
+        //     UserId = request.Appointment.DoctorId,
+        //     Content = $"Patient has scheduled an appointment from " +
+        //               $"{slot.StartTime:yyyy-MM-dd HH:mm} to {slot.EndTime:yyyy-MM-dd HH:mm}."
+        // };
+        //
+        // await notificationRepository.AddAsync(notificationDoctor);
+        //
+        // await notificationService.PushNotificationAsync(notificationDoctor.UserId.ToString(), notificationDoctor);
         
         await unitOfWork.CommitAsync();
         
