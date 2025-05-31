@@ -1,0 +1,237 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    /* Medical color palette */
+    --medical-teal-50: #f0fdfa;
+    --medical-teal-100: #ccfbf1;
+    --medical-teal-200: #99f6e4;
+    --medical-teal-300: #5eead4;
+    --medical-teal-400: #2dd4bf;
+    --medical-teal-500: #14b8a6;
+    --medical-teal-600: #0d9488;
+    --medical-teal-700: #0f766e;
+    --medical-teal-800: #115e59;
+    --medical-teal-900: #134e4a;
+
+    --medical-emerald-50: #ecfdf5;
+    --medical-emerald-100: #d1fae5;
+    --medical-emerald-200: #a7f3d0;
+    --medical-emerald-300: #6ee7b7;
+    --medical-emerald-400: #34d399;
+    --medical-emerald-500: #10b981;
+    --medical-emerald-600: #059669;
+    --medical-emerald-700: #047857;
+    --medical-emerald-800: #065f46;
+    --medical-emerald-900: #064e3b;
+
+    --medical-blue-50: #eff6ff;
+    --medical-blue-100: #dbeafe;
+    --medical-blue-200: #bfdbfe;
+    --medical-blue-300: #93c5fd;
+    --medical-blue-400: #60a5fa;
+    --medical-blue-500: #3b82f6;
+    --medical-blue-600: #2563eb;
+    --medical-blue-700: #1d4ed8;
+    --medical-blue-800: #1e40af;
+    --medical-blue-900: #1e3a8a;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom Animations */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Custom Utility Classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.gradient-animate {
+  background: linear-gradient(-45deg, #2dd4bf, #34d399, #60a5fa, #14b8a6);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* 3D Transform Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Medical Pattern Backgrounds */
+.medical-pattern {
+  background-image: radial-gradient(circle at 25% 25%, var(--medical-teal-100) 2px, transparent 2px),
+  radial-gradient(circle at 75% 75%, var(--medical-emerald-100) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Card Hover Effects */
+.card-hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0fdfa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #99f6e4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #14b8a6;
+}
+
+/* Smooth transitions for form elements */
+input:focus,
+textarea:focus,
+select:focus {
+  transform: scale(1.02);
+  transition: transform 0.2s ease-out;
+}
+
+/* Button hover effects */
+button:hover:not(:disabled) {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-out;
+}
+
+button:disabled {
+  transform: scale(1);
+}
+
+/* Fix for browser extension hydration issues */
+[bis_skin_checked] {
+  /* Ignore browser extension attributes */
+}
