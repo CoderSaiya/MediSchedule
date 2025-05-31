@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using MediSchedule.Domain.Common;
+using MediSchedule.Domain.ValueObjects;
 
 namespace MediSchedule.Domain.Entities;
 
@@ -23,5 +24,5 @@ public class Appointment : BaseEntity
     public string? FileUrl { get; set; }
     
     public string Reason { get; set; } = null!;
-    
+    public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
 }
