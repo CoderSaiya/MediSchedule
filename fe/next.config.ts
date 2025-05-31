@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
             level: 'verbose'
         }
     },
+    images: {
+        domains: [
+            'api.qrserver.com',
+            'sonysam1233.blob.core.windows.net'
+        ],
+    },
 };
 
 export default nextConfig;
