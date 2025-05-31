@@ -5,6 +5,9 @@ import type {Response} from "@/types"
 import { setCredentials, updateAccessToken, logout } from "@/store/slices/authSlice";
 import {Specialty, SpecialtyWithDoctor} from "@/types/specialty";
 import {GetTimeSlotsParams, TimeSlot} from "@/types/slot";
+import {MomoRequest, PaymentData, PaymentStatusResponse} from "@/types/payment";
+import {CreateAppointmentRequest, CreateAppointmentResponse} from "@/types/appointment";
+import {Doctor} from "@/types/user";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -83,6 +86,44 @@ export const api = createApi({
                 method: "GET",
             }),
         }),
+        createMomoPayment: builder.mutation<Response<PaymentData>, MomoRequest>({
+            query: (request) => ({
+                url: "Payment/momo/create-intent",
+                method: "POST",
+                body: request,
+            }),
+        }),
+        checkPaymentStatus: builder.query<Response<PaymentStatusResponse>, string>({
+            query: (orderId) => ({
+                url: `Payment/status/${orderId}`,
+                method: "GET",
+            })
+        }),
+        createAppointment: builder.mutation<Response<string>, CreateAppointmentRequest>({
+            query: (request) => ({
+                url: "Appointment",
+                method: "POST",
+                body: request,
+            })
+        }),
+        uploadToBlob: builder.mutation<Response<{ url: string }>, { file: Blob; containerName: string; appointmentId?: string | null }>({
+            query: ({ file, containerName, appointmentId }) => {
+                const formData = new FormData()
+                formData.append('file', file, `Phiếu-Khám-${appointmentId}.png`)
+                formData.append("containerName", containerName)
+                return {
+                    url: `Public/storage/${appointmentId}`,
+                    method: "POST",
+                    body: formData,
+                }
+            },
+        }),
+        getDoctors: builder.query<Response<Doctor[]>, void>({
+            query: () => ({
+                url: `Public/doctors`,
+                method: "GET",
+            })
+        })
     }),
 });
 
@@ -91,4 +132,9 @@ export const {
     useGetSpecialtiesQuery,
     useGetSpecialtiesWithDoctorQuery,
     useGetTimeSlotsQuery,
+    useCreateMomoPaymentMutation,
+    useCheckPaymentStatusQuery,
+    useCreateAppointmentMutation,
+    useUploadToBlobMutation,
+    useGetDoctorsQuery,
 } = api;
