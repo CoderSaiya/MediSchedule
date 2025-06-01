@@ -10,6 +10,7 @@ public class Prescription : BaseEntity
     public Appointment Appointment { get; set; } = null!;
     
     public string? Notes { get; set; }
+    public string? FileUrl { get; set; }
     
     public ICollection<PrescriptionMedication> PrescriptionMedications { get; set; } = new List<PrescriptionMedication>();
 }

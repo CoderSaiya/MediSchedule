@@ -16,4 +16,9 @@
       <ProjectReference Include="..\MediSchedule.Domain\MediSchedule.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UseCases\Prescriptions\Handlers\" />
+      <Folder Include="UseCases\Prescriptions\Queries\" />
+    </ItemGroup>
+
 </Project>
