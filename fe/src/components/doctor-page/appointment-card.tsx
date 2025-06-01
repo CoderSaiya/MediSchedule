@@ -5,20 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Clock, User, Phone, FileText, MoreVertical, CheckCircle, AlertTriangle, Calendar } from "lucide-react"
+import { Clock, Phone, FileText, MoreVertical, CheckCircle, AlertTriangle, Calendar } from "lucide-react"
+import {Appointment} from "@/types/appointment";
 
 interface AppointmentCardProps {
-    appointment: {
-        id: string
-        patientName: string
-        patientAge: number
-        appointmentTime: string
-        appointmentType: string
-        status: "confirmed" | "waiting" | "urgent" | "completed"
-        symptoms: string
-        phone: string
-        isUrgent: boolean
-    }
+    appointment: Appointment
 }
 
 export function AppointmentCard({ appointment }: AppointmentCardProps) {
@@ -62,7 +53,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
 
     const getActionButtons = () => {
         switch (appointment.status) {
-            case "waiting":
+            case "pending":
                 return (
                     <>
                         <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
@@ -81,17 +72,6 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                         </Button>
                         <Button size="sm" variant="outline">
                             Liên hệ
-                        </Button>
-                    </>
-                )
-            case "urgent":
-                return (
-                    <>
-                        <Button size="sm" className="bg-red-600 hover:bg-red-700">
-                            Khám ngay
-                        </Button>
-                        <Button size="sm" variant="outline">
-                            Gọi cấp cứu
                         </Button>
                     </>
                 )
@@ -114,15 +94,15 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
 
     return (
         <Card
-            className={`hover:shadow-md transition-all duration-200 ${appointment.isUrgent ? "border-red-200 bg-red-50/30" : ""}`}
+            className={`hover:shadow-md transition-all duration-200`}
         >
             <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4 flex-1">
                         <Avatar className="h-12 w-12">
-                            <AvatarImage src="/placeholder.svg" alt={appointment.patientName} />
+                            <AvatarImage alt={appointment.fullName} />
                             <AvatarFallback className="bg-teal-100 text-teal-700">
-                                {appointment.patientName
+                                {appointment.fullName
                                     .split(" ")
                                     .map((n) => n[0])
                                     .join("")}
@@ -131,17 +111,11 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
 
                         <div className="flex-1 space-y-2">
                             <div className="flex items-center space-x-3">
-                                <h4 className="font-semibold text-gray-900">{appointment.patientName}</h4>
+                                <h4 className="font-semibold text-gray-900">{appointment.fullName}</h4>
                                 <Badge className={statusConfig.color}>
                                     <StatusIcon className="h-3 w-3 mr-1" />
                                     {statusConfig.label}
                                 </Badge>
-                                {appointment.isUrgent && (
-                                    <Badge className="bg-red-100 text-red-700 border-red-200">
-                                        <AlertTriangle className="h-3 w-3 mr-1" />
-                                        Khẩn cấp
-                                    </Badge>
-                                )}
                             </div>
 
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm text-gray-600">
@@ -149,23 +123,23 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                                     <Clock className="h-4 w-4 text-gray-400" />
                                     <span>{appointment.appointmentTime}</span>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <User className="h-4 w-4 text-gray-400" />
-                                    <span>{appointment.patientAge} tuổi</span>
-                                </div>
+                                {/*<div className="flex items-center space-x-2">*/}
+                                {/*    <User className="h-4 w-4 text-gray-400" />*/}
+                                {/*    <span>{appointment.patientAge} tuổi</span>*/}
+                                {/*</div>*/}
                                 <div className="flex items-center space-x-2">
                                     <Phone className="h-4 w-4 text-gray-400" />
                                     <span>{appointment.phone}</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <FileText className="h-4 w-4 text-gray-400" />
-                                    <span>{appointment.appointmentType}</span>
+                                    <span>{appointment.doctor?.specialty ?? ""}</span>
                                 </div>
                             </div>
 
                             <div className="text-sm">
                                 <span className="font-medium text-gray-700">Triệu chứng: </span>
-                                <span className="text-gray-600">{appointment.symptoms}</span>
+                                <span className="text-gray-600">{appointment.reason}</span>
                             </div>
                         </div>
                     </div>
