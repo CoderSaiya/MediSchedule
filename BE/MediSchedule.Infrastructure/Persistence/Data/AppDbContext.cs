@@ -18,6 +18,9 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<Prescription> Prescriptions { get; set; }
+    public DbSet<Medicine> Medicines { get; set; }
+    public DbSet<PrescriptionMedication> PrescriptionMedications { get; set; }
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
