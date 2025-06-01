@@ -2,5 +2,6 @@
 
 public record DoctorDto(
     Guid Id,
-    string Name
+    string Name,
+    string Speciality
     );

@@ -15,7 +15,8 @@ public class GetSpecialtiesWithDoctorHandler(ISpecialtyRepository specialtyRepos
             DoctorNames: s.Doctors
                 .Select(d => new DoctorDto(
                     Id: d.Id,
-                    Name: $"BS. {d.Profile?.FullName ?? d.Username}"
+                    Name: $"BS. {d.Profile?.FullName ?? d.Username}",
+                    Speciality: s.Name
                 ))
                 .ToArray(),
             Amount: s.Amount

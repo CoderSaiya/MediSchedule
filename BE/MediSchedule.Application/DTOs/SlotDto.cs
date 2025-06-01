@@ -3,5 +3,7 @@
 public record SlotDto(
     DayOfWeek Day,
     TimeSpan StartTime,
-    TimeSpan EndTime
+    TimeSpan EndTime,
+    Guid? Id = null,
+    bool? IsBooked = null
 );
