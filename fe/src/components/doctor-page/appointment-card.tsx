@@ -7,12 +7,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Clock, Phone, FileText, MoreVertical, CheckCircle, AlertTriangle, Calendar } from "lucide-react"
 import {Appointment} from "@/types/appointment";
+import {useState} from "react";
+import {PrescriptionForm} from "@/components/doctor-page/prescription-form";
 
 interface AppointmentCardProps {
     appointment: Appointment
 }
 
 export function AppointmentCard({ appointment }: AppointmentCardProps) {
+    const [showPrescriptionForm, setShowPrescriptionForm] = useState(false)
+
     const getStatusConfig = (status: string) => {
         switch (status) {
             case "confirmed":
@@ -21,17 +25,11 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                     label: "Đã xác nhận",
                     icon: Calendar,
                 }
-            case "waiting":
+            case "pending":
                 return {
                     color: "bg-yellow-100 text-yellow-700 border-yellow-200",
                     label: "Đang chờ",
                     icon: Clock,
-                }
-            case "urgent":
-                return {
-                    color: "bg-red-100 text-red-700 border-red-200",
-                    label: "Cấp cứu",
-                    icon: AlertTriangle,
                 }
             case "completed":
                 return {
@@ -68,11 +66,11 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                 return (
                     <>
                         <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
-                            Check-in
+                            Kê đơn thuốc
                         </Button>
-                        <Button size="sm" variant="outline">
-                            Liên hệ
-                        </Button>
+                        {/*<Button size="sm" variant="outline">*/}
+                        {/*    Liên hệ*/}
+                        {/*</Button>*/}
                     </>
                 )
             case "completed":
@@ -174,6 +172,17 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                     </div>
                 </div>
             </CardContent>
+
+            {showPrescriptionForm && (
+                <PrescriptionForm
+                    appointmentId={appointment.id}
+                    patientName={appointment.fullName}
+                    onClose={() => setShowPrescriptionForm(false)}
+                    onSuccess={() => {
+                        setShowPrescriptionForm(false)
+                    }}
+                />
+            )}
         </Card>
     )
 }
