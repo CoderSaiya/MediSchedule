@@ -14,5 +14,33 @@ export interface PrescriptionMedication {
     quantity: number
     unit: string
     instructions: string
-    itemNotes: string
+    itemNotes: string | null
+}
+
+export interface PrescriptionMedicationDto extends PrescriptionMedication {
+    medicine: MedicineDto
+}
+
+export interface MedicineDto {
+    id: string
+    name: string
+    genericName?: string | null
+    strength?: string | null
+    manufacturer?: string | null
+    description?: string | null
+}
+
+export interface CreatePrescriptionResponse {
+    id: string
+    appointmentId: string
+    note?: string | null
+    fileUrl: string
+    item : PrescriptionMedicationDto[]
+}
+
+export interface CreatePrescriptionRequest {
+    appointmentId: string
+    notes?: string | null
+    file: File
+    items: PrescriptionMedication[];
 }

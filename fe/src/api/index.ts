@@ -8,7 +8,7 @@ import {GetTimeSlotsParams, TimeSlot} from "@/types/slot";
 import {MomoRequest, PaymentData, PaymentStatusResponse} from "@/types/payment";
 import {Appointment, CreateAppointmentRequest} from "@/types/appointment";
 import {Doctor} from "@/types/user";
-import {DashboardStats} from "@/types/doctor";
+import {CreatePrescriptionRequest, CreatePrescriptionResponse, DashboardStats, MedicineDto} from "@/types/doctor";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -159,7 +159,49 @@ export const api = createApi({
                     body: formData,
                 }
             },
-        })
+        }),
+        createPrescription: builder.mutation<Response<CreatePrescriptionResponse>, CreatePrescriptionRequest>({
+            query: ({ appointmentId, notes, file, items }) => {
+                const formData = new FormData()
+
+                formData.append("AppointmentId", appointmentId);
+                if (notes) {
+                    formData.append("Notes", notes);
+                }
+                formData.append("File", file);
+
+                items.forEach((item, index) => {
+                    formData.append(`Items[${index}].MedicineId`, item.medicineId);
+                    formData.append(`Items[${index}].Dosage`, item.dosage);
+                    formData.append(
+                        `Items[${index}].Quantity`,
+                        item.quantity.toString()
+                    );
+                    if (item.unit) {
+                        formData.append(`Items[${index}].Unit`, item.unit);
+                    }
+                    formData.append(
+                        `Items[${index}].Instructions`,
+                        item.instructions
+                    );
+                    if (item.itemNotes) {
+                        formData.append(`Items[${index}].ItemNotes`, item.itemNotes);
+                    }
+                });
+
+                return {
+                    url: `Doctor/create-prescription`,
+                    method: "POST",
+                    body: formData,
+                }
+            },
+        }),
+        getMedicines: builder.query<Response<MedicineDto[]>, void>({
+            query: () => ({
+                url: `Doctor/medicines`,
+                method: "GET",
+            })
+        }),
     }),
 });
 
@@ -178,4 +220,6 @@ export const {
     useGetAppointmentByDoctorQuery,
     useGetTodayAppointmentsQuery,
     useUpdateAppointmentStatusMutation,
+    useCreatePrescriptionMutation,
+    useGetMedicinesQuery,
 } = api;

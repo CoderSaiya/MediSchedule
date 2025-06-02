@@ -65,7 +65,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
             case "confirmed":
                 return (
                     <>
-                        <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+                        <Button size="sm" className="bg-teal-600 hover:bg-teal-700" onClick={() => setShowPrescriptionForm(true)}>
                             Kê đơn thuốc
                         </Button>
                         {/*<Button size="sm" variant="outline">*/}

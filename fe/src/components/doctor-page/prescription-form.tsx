@@ -10,7 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Trash2, FileImage } from "lucide-react"
 import { toast } from "sonner"
-import {PrescriptionMedication} from "@/types/doctor";
+import {CreatePrescriptionRequest, PrescriptionMedication} from "@/types/doctor";
+import {useCreatePrescriptionMutation, useGetMedicinesQuery} from "@/api";
 
 interface PrescriptionFormProps {
     appointmentId: string
@@ -28,7 +29,7 @@ const MEDICINES = [
 ]
 
 export function PrescriptionForm({ appointmentId, patientName, onClose, onSuccess }: PrescriptionFormProps) {
-    const [notes, setNotes] = useState("")
+    const [notes, setNotes] = useState<string>("")
     const [medications, setMedications] = useState<PrescriptionMedication[]>([
         {
             medicineId: "",
@@ -57,6 +58,11 @@ export function PrescriptionForm({ appointmentId, patientName, onClose, onSucces
         ])
     }
 
+    const {data: medicinesResponse} = useGetMedicinesQuery()
+    const [createPrescription] = useCreatePrescriptionMutation();
+
+    const medicines = medicinesResponse?.data || [];
+
     const removeMedication = (index: number) => {
         if (medications.length > 1) {
             setMedications(medications.filter((_, i) => i !== index))
@@ -69,10 +75,9 @@ export function PrescriptionForm({ appointmentId, patientName, onClose, onSucces
 
         // If medicine is selected, auto-fill name and unit
         if (field === "medicineId") {
-            const medicine = MEDICINES.find((m) => m.id === value)
+            const medicine = medicines.find((m) => m.id === value)
             if (medicine) {
                 updated[index].medicineName = medicine.name
-                updated[index].unit = medicine.unit
             }
         }
 
@@ -176,23 +181,22 @@ export function PrescriptionForm({ appointmentId, patientName, onClose, onSucces
                 date: new Date().toISOString(),
             })
 
-            // Prepare form data
-            const formData = new FormData()
-            formData.append("AppointmentId", appointmentId)
-            formData.append("Notes", notes)
-            formData.append("File", prescriptionFile)
+            const request: CreatePrescriptionRequest = {
+                appointmentId: appointmentId,
+                file: prescriptionFile,
+                items: validMedications.map(med => ({
+                    medicineId: med.medicineId,
+                    medicineName: "",
+                    dosage: med.dosage,
+                    quantity: med.quantity,
+                    unit: med.unit,
+                    instructions: med.instructions,
+                    itemNotes: med.itemNotes !== "" ? med.itemNotes : null,
+                })),
+                notes: notes
+            }
 
-            validMedications.forEach((med, index) => {
-                formData.append(`Items[${index}].MedicineId`, med.medicineId)
-                formData.append(`Items[${index}].Dosage`, med.dosage)
-                formData.append(`Items[${index}].Quantity`, med.quantity.toString())
-                formData.append(`Items[${index}].Unit`, med.unit)
-                formData.append(`Items[${index}].Instructions`, med.instructions)
-                formData.append(`Items[${index}].ItemNotes`, med.itemNotes)
-            })
-
-            // Here you would make the API call to create prescription
-            // await createPrescription(formData)
+            await createPrescription(request)
 
             toast.success("Đơn thuốc đã được tạo thành công")
             onSuccess()
@@ -220,7 +224,7 @@ export function PrescriptionForm({ appointmentId, patientName, onClose, onSucces
                         <Textarea
                             id="notes"
                             placeholder="Nhập ghi chú về tình trạng bệnh nhân, lời dặn..."
-                            value={notes}
+                            value={notes ?? ""}
                             onChange={(e) => setNotes(e.target.value)}
                             rows={3}
                         />
@@ -265,7 +269,7 @@ export function PrescriptionForm({ appointmentId, patientName, onClose, onSucces
                                                     <SelectValue placeholder="Chọn thuốc" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {MEDICINES.map((medicine) => (
+                                                    {medicines.map((medicine) => (
                                                         <SelectItem key={medicine.id} value={medicine.id}>
                                                             {medicine.name}
                                                         </SelectItem>
@@ -318,7 +322,7 @@ export function PrescriptionForm({ appointmentId, patientName, onClose, onSucces
                                         <Label>Ghi chú riêng</Label>
                                         <Input
                                             placeholder="Ghi chú đặc biệt cho thuốc này..."
-                                            value={medication.itemNotes}
+                                            value={medication.itemNotes ?? ""}
                                             onChange={(e) => updateMedication(index, "itemNotes", e.target.value)}
                                         />
                                     </div>
