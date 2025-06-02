@@ -8,7 +8,7 @@ public class PrescriptionRepository(AppDbContext context) : GenericRepository<Pr
 {
     private readonly AppDbContext _context = context;
 
-    public override async Task<Prescription?> GetByIdAsync(Guid appointmentId)
+    public async Task<Prescription?> GetByAppointmentIdAsync(Guid appointmentId)
     {
         return await _context.Set<Prescription>()
             .Include(p => p.PrescriptionMedications)
