@@ -17,7 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="UseCases\Prescriptions\Handlers\" />
       <Folder Include="UseCases\Prescriptions\Queries\" />
     </ItemGroup>
 

@@ -45,6 +45,7 @@ public static class DependencyInjection
        services.AddScoped<IRefreshRepository, RefreshRepository>();
        services.AddScoped<IStatisticRepository, StatisticsRepository>();
        services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+       services.AddScoped<IMedicineRepository, MedicineRepository>();
        
        services.AddSingleton<IBlobService, AzureBlobService>();
        services.AddScoped<IAuthService, AuthService>();
