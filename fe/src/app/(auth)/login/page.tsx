@@ -1,35 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link"
 import { Heart, Stethoscope, Phone, Video, BriefcaseMedical } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {useLoginMutation} from "@/api";
+import { decodeToken } from "@/lib/jwt";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+    const router = useRouter();
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
 
-    const [role, setRole] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
     const canLogin = username.trim() !== "" && password.trim() !== "";
 
-
-    const fakeLoginApi = (username: string, password: string) =>
-        new Promise<{ success: boolean; message: string }>((resolve) => {
-            setTimeout(() => {
-                if (username === "admin" && password === "123456") {
-                    resolve({ success: true, message: "Đăng nhập thành công!" });
-                } else {
-                    resolve({ success: false, message: "Tên đăng nhập hoặc mật khẩu không đúng." });
-                }
-            }, 1500);
-        });
+    const [login] = useLoginMutation()
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,9 +34,36 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const result = await fakeLoginApi(username, password);
+            const result = await login({ username, password }).unwrap();
 
-            if (result.success) {
+            if (result.isSuccess) {
+                const accessToken = result.data.accessToken
+                const refreshToken = result.data.refreshToken;
+                const { role, userId } = decodeToken(accessToken);
+
+
+                if (remember) {
+                    localStorage.setItem("accessToken", accessToken)
+                    localStorage.setItem("refreshToken", refreshToken);
+                    localStorage.setItem("role", role.toLowerCase());
+                    localStorage.setItem("userId", userId);
+                } else {
+                    sessionStorage.setItem("accessToken", accessToken);
+                    sessionStorage.setItem("refreshToken", refreshToken)
+                    sessionStorage.setItem("role", role.toLowerCase());
+                    sessionStorage.setItem("userId", userId);
+                }
+
+                setTimeout(() => {
+                    if (role.toLowerCase() === "admin") {
+                        router.push("/admin/dashboard");
+                    } else if (role.toLowerCase() === "doctor") {
+                        router.push("/doctor/dashboard");
+                    } else {
+                        router.push("/");
+                    }
+                }, 500);
+
                 setSuccessMsg(result.message);
                 setError(null);
             } else {
@@ -174,15 +194,13 @@ export default function LoginPage() {
                             </a>
                         </div>
 
-                        <Link href={role === "admin" ? "/admin" : role === "doctor" ? "/doctor" : "/"}>
-                            <Button
-                                type="submit"
-                                disabled={!canLogin || loading}
-                                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white px-8 py-4 text-lg h-14 shadow-xl hover:shadow-2xl transition-all duration-300 group"
-                            >
-                                {loading ? "Đang đăng nhập..." : "Đăng nhập"}
-                            </Button>
-                        </Link>
+                        <Button
+                            type="submit"
+                            disabled={!canLogin || loading}
+                            className="w-full bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white px-8 py-4 text-lg h-14 shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                        >
+                            {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+                        </Button>
                     </form>
 
                 </div>
