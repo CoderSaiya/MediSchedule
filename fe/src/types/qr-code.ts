@@ -28,7 +28,6 @@ export interface QRVerificationResponse {
 
 export interface ScannedQRData {
     appointmentId: string
-    doctorId: string
     patientName: string
     appointmentDate: string
     appointmentTime: string
