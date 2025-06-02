@@ -6,3 +6,13 @@ export interface DashboardStats {
     completedDelta: number
     averageRating: number
 }
+
+export interface PrescriptionMedication {
+    medicineId: string
+    medicineName: string
+    dosage: string
+    quantity: number
+    unit: string
+    instructions: string
+    itemNotes: string
+}
