@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MediSchedule.Application.DTOs;
 using MediSchedule.Application.UseCases.Appointments.Queries;
+using MediSchedule.Application.UseCases.Prescriptions.Commands;
 using MediSchedule.Application.UseCases.Statistics.Queries;
 using MediSchedule.Domain.Specifications;
 using Microsoft.AspNetCore.Mvc;
@@ -56,5 +57,14 @@ public class DoctorController(IMediator mediator) : Controller
             new GetTodayAppointmentByDoctorQuery(doctorId));
 
         return Ok(GlobalResponse<IEnumerable<AppointmentResponse>>.Success(appointments));
+    }
+
+    [HttpPost("create-prescription")]
+    public async Task<IActionResult> CreatePrescription([FromBody] CreatePrescriptionRequest request)
+    {
+        var prescription = await mediator.Send(
+            new CreatePrescriptionCommand(request.AppointmentId, request.Notes, request.File, request.Items));
+
+        return Ok(GlobalResponse<PrescriptionResponse>.Success(prescription, "Create prescription success!"));
     }
 }
