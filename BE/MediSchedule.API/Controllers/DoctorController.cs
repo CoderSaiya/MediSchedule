@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MediSchedule.Application.DTOs;
 using MediSchedule.Application.UseCases.Appointments.Queries;
+using MediSchedule.Application.UseCases.Medicines.Queries;
 using MediSchedule.Application.UseCases.Prescriptions.Commands;
 using MediSchedule.Application.UseCases.Statistics.Queries;
 using MediSchedule.Domain.Specifications;
@@ -67,5 +68,14 @@ public class DoctorController(IMediator mediator) : Controller
             new CreatePrescriptionCommand(request.AppointmentId, request.Notes, request.File, request.Items));
 
         return Ok(GlobalResponse<PrescriptionResponse>.Success(prescription, "Create prescription success!"));
+    }
+
+    [HttpGet("medicines")]
+    public async Task<IActionResult> GetMedicines()
+    {
+        var medicines = await mediator.Send(
+            new GetMedicinesQuery());
+        
+        return Ok(GlobalResponse<IEnumerable<MedicineResponse>>.Success(medicines));
     }
 }
