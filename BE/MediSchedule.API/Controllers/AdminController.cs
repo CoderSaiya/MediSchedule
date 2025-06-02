@@ -2,6 +2,7 @@
 using MediSchedule.Application.DTOs;
 using MediSchedule.Application.UseCases.Appointments.Queries;
 using MediSchedule.Application.UseCases.Doctors.Commands;
+using MediSchedule.Application.UseCases.Medicines.Commands;
 using MediSchedule.Application.UseCases.Notifications.Commands;
 using MediSchedule.Application.UseCases.Users.Queries;
 using MediSchedule.Domain.Entities;
@@ -74,5 +75,31 @@ public class AdminController(IMediator mediator) : Controller
             new GetUsersQuery(filter));
         
         return Ok(GlobalResponse<IEnumerable<User>>.Success(appointments));
+    }
+
+    [HttpPost("medicine")]
+    public async Task<IActionResult> CreateMedicine([FromBody] CreateMedicineRequest request)
+    {
+        try
+        {
+            var medicine = new Medicine
+            {
+                Name = request.Name,
+                GenericName = request.GenericName ?? null,
+                Strength = request.Strength ?? null,
+                Manufacturer = request.Manufacturer ?? null,
+                Description = request.Description,
+            };
+
+            await mediator.Send(
+                new CreateMedicineCommand(medicine));
+
+            return Ok(GlobalResponse<string>.Success($"Medicine {request.Name} created successfully."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
+        }
+        
     }
 }
