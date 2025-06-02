@@ -60,7 +60,8 @@ public class DoctorController(IMediator mediator) : Controller
     }
 
     [HttpPost("create-prescription")]
-    public async Task<IActionResult> CreatePrescription([FromBody] CreatePrescriptionRequest request)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> CreatePrescription([FromForm] CreatePrescriptionRequest request)
     {
         var prescription = await mediator.Send(
             new CreatePrescriptionCommand(request.AppointmentId, request.Notes, request.File, request.Items));
