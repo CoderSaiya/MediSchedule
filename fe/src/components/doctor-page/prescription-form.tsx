@@ -18,17 +18,10 @@ interface PrescriptionFormProps {
     patientName: string
     onClose: () => void
     onSuccess: () => void
+    refetch: () => void
 }
 
-const MEDICINES = [
-    { id: "1", name: "Paracetamol 500mg", unit: "viên" },
-    { id: "2", name: "Amoxicillin 250mg", unit: "viên" },
-    { id: "3", name: "Ibuprofen 400mg", unit: "viên" },
-    { id: "4", name: "Cough Syrup", unit: "chai" },
-    { id: "5", name: "Vitamin C 1000mg", unit: "viên" },
-]
-
-export function PrescriptionForm({ appointmentId, patientName, onClose, onSuccess }: PrescriptionFormProps) {
+export function PrescriptionForm({ appointmentId, patientName, onClose, onSuccess, refetch }: PrescriptionFormProps) {
     const [notes, setNotes] = useState<string>("")
     const [medications, setMedications] = useState<PrescriptionMedication[]>([
         {
@@ -199,6 +192,8 @@ export function PrescriptionForm({ appointmentId, patientName, onClose, onSucces
             await createPrescription(request)
 
             toast.success("Đơn thuốc đã được tạo thành công")
+
+            refetch();
             onSuccess()
         } catch {
             toast.error("Có lỗi xảy ra khi tạo đơn thuốc")

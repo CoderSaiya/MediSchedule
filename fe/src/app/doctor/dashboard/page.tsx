@@ -47,7 +47,8 @@ export default function DoctorDashboard() {
     const {
         data: appointmentResponse,
         error: appointmentError,
-        isLoading: appointmentLoading } = useGetTodayAppointmentsQuery("ade33dc5-69b4-4f67-8203-1cfff95d49d6")
+        isLoading: appointmentLoading,
+        refetch: appointmentRefetch} = useGetTodayAppointmentsQuery("ade33dc5-69b4-4f67-8203-1cfff95d49d6")
 
 
     useEffect(() => {
@@ -231,7 +232,7 @@ export default function DoctorDashboard() {
                                                 animate={{ opacity: 1, x: 0 }}
                                                 transition={{ duration: 0.4, delay: index * 0.1 }}
                                             >
-                                                <AppointmentCard appointment={appointment} />
+                                                <AppointmentCard appointment={appointment} refetch={appointmentRefetch}/>
                                             </motion.div>
                                         ))
                                     )}

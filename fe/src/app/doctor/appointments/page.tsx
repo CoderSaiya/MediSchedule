@@ -22,7 +22,7 @@ export default function DoctorAppointments() {
     const [selectedTab, setSelectedTab] = useState("today")
 
     const doctorId = localStorage.getItem("userId")
-    const { data, error, isLoading } = useGetAppointmentByDoctorQuery(doctorId as string)
+    const { data, error, isLoading, refetch } = useGetAppointmentByDoctorQuery(doctorId as string)
     const appointments = data?.data || []
 
     const getFilteredAppointments = () => {
@@ -279,7 +279,7 @@ export default function DoctorAppointments() {
                                                     animate={{ opacity: 1, y: 0 }}
                                                     transition={{ duration: 0.3, delay: index * 0.05 }}
                                                 >
-                                                    <AppointmentCard appointment={appointment} />
+                                                    <AppointmentCard appointment={appointment} refetch={refetch} />
                                                 </motion.div>
                                             ))
                                         )}

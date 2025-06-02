@@ -12,9 +12,10 @@ import {PrescriptionForm} from "@/components/doctor-page/prescription-form";
 
 interface AppointmentCardProps {
     appointment: Appointment
+    refetch: () => void
 }
 
-export function AppointmentCard({ appointment }: AppointmentCardProps) {
+export function AppointmentCard({ appointment, refetch }: AppointmentCardProps) {
     const [showPrescriptionForm, setShowPrescriptionForm] = useState(false)
 
     const getStatusConfig = (status: string) => {
@@ -181,6 +182,7 @@ export function AppointmentCard({ appointment }: AppointmentCardProps) {
                     onSuccess={() => {
                         setShowPrescriptionForm(false)
                     }}
+                    refetch={refetch}
                 />
             )}
         </Card>
