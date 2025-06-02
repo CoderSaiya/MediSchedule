@@ -3,7 +3,8 @@
 import { type ReactNode, useEffect, useState } from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { Provider as ReduxProvider } from "react-redux"
-import { store } from "@/store"
+import { persistor, store } from "@/store"
+import { PersistGate } from "redux-persist/integration/react";
 
 export function Providers({ children }: { children: ReactNode }) {
     const [mounted, setMounted] = useState(false)
@@ -35,21 +36,23 @@ export function Providers({ children }: { children: ReactNode }) {
     // Always wrap with Redux Provider first, even before mounting
     return (
         <ReduxProvider store={store}>
-            {mounted ? (
-                <NextThemesProvider
-                    attribute="class"
-                    defaultTheme="light"
-                    enableSystem={false}
-                    disableTransitionOnChange
-                    storageKey="medischedule-theme"
-                >
-                    {children}
-                </NextThemesProvider>
-            ) : (
-                <div suppressHydrationWarning className="light">
-                    {children}
-                </div>
-            )}
+            <PersistGate loading={null} persistor={persistor}>
+                {mounted ? (
+                    <NextThemesProvider
+                        attribute="class"
+                        defaultTheme="light"
+                        enableSystem={false}
+                        disableTransitionOnChange
+                        storageKey="medischedule-theme"
+                    >
+                        {children}
+                    </NextThemesProvider>
+                ) : (
+                    <div suppressHydrationWarning className="light">
+                        {children}
+                    </div>
+                )}
+            </PersistGate>
         </ReduxProvider>
     )
 }
