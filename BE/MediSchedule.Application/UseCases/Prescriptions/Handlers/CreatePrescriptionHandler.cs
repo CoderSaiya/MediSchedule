@@ -4,6 +4,7 @@ using MediSchedule.Application.UseCases.Prescriptions.Commands;
 using MediSchedule.Application.UseCases.Storages.Commands;
 using MediSchedule.Domain.Entities;
 using MediSchedule.Domain.Interfaces;
+using MediSchedule.Domain.ValueObjects;
 
 namespace MediSchedule.Application.UseCases.Prescriptions.Handlers;
 
@@ -19,8 +20,8 @@ public class CreatePrescriptionHandler(
     {
         if (request == null) throw new ArgumentNullException(nameof(request));
         
-        bool appointmentExists = await appointmentRepository.ExistsAsync(a => a.Id == request.AppointmentId);
-        if (!appointmentExists)
+        var appointmentExists = await appointmentRepository.GetByIdAsync(request.AppointmentId);
+        if (appointmentExists is null)
             throw new KeyNotFoundException($"Không tìm thấy Appointment có Id = {request.AppointmentId}");
         
         var existing = await prescriptionRepository.GetByAppointmentIdAsync(request.AppointmentId);
@@ -37,23 +38,24 @@ public class CreatePrescriptionHandler(
         
         var prescription = new Prescription
         {
-            Id = Guid.NewGuid(),
             AppointmentId = request.AppointmentId,
             Notes = request.Notes?.Trim(),
             FileUrl = await mediator.Send(
                 new StorageToBlobCommand(AppointmentId: Guid.Empty, ContainerName: "prescriptions", File: request.File), cancellationToken),
         };
         
+        var tempMedicationTuples = new List<(PrescriptionMedication pm, Medicine medicineEntity)>();
+        
         foreach (var itemDto in request.Items)
         {
-            bool medExists = await medicineRepository.ExistsAsync(m => m.Id == itemDto.MedicineId);
-            if (!medExists)
+            var medicineEntity = await medicineRepository.GetByIdAsync(itemDto.MedicineId);
+            if (medicineEntity is null)
                 throw new KeyNotFoundException($"MedicineId {itemDto.MedicineId} không tồn tại.");
 
             var pm = new PrescriptionMedication
             {
-                PrescriptionId = prescription.Id,
-                MedicineId = itemDto.MedicineId,
+                MedicineId = medicineEntity.Id,
+                Medicine = medicineEntity,
                 Dosage = itemDto.Dosage.Trim(),
                 Quantity = itemDto.Quantity,
                 Unit = itemDto.Unit?.Trim(),
@@ -61,44 +63,40 @@ public class CreatePrescriptionHandler(
                 ItemNotes = itemDto.ItemNotes?.Trim()
             };
             prescription.PrescriptionMedications.Add(pm);
+            
+            tempMedicationTuples.Add((pm, medicineEntity));
         }
+
+        appointmentExists.Status = AppointmentStatus.Completed;
         
         await prescriptionRepository.AddAsync(prescription);
         await unitOfWork.CommitAsync();
         
-        var resultDto = new PrescriptionResponse
-        (
+        var itemsDto = tempMedicationTuples.Select(tuple => new PrescriptionMedicationDto(
+            Id: tuple.pm.Id,
+            MedicineId: tuple.pm.MedicineId,
+            Dosage: tuple.pm.Dosage,
+            Quantity: tuple.pm.Quantity,
+            Unit: tuple.pm.Unit,
+            Instructions: tuple.pm.Instructions,
+            ItemNotes: tuple.pm.ItemNotes,
+            Medicine: new MedicineDto(
+                Id: tuple.medicineEntity.Id,
+                Name: tuple.medicineEntity.Name,
+                GenericName: tuple.medicineEntity.GenericName,
+                Strength: tuple.medicineEntity.Strength,
+                Manufacturer: tuple.medicineEntity.Manufacturer,
+                Description: tuple.medicineEntity.Description
+            )
+        )).ToList();
+        
+        var resultDto = new PrescriptionResponse(
             Id: prescription.Id,
             AppointmentId: prescription.AppointmentId,
             Notes: prescription.Notes,
             FileUrl: prescription.FileUrl,
-            Items: new List<PrescriptionMedicationDto>()
+            Items: itemsDto
         );
-        
-        foreach (var pm in prescription.PrescriptionMedications)
-        {
-            var med = pm.Medicine;
-            var pmDto = new PrescriptionMedicationDto
-            (
-                Id: pm.Id,
-                MedicineId: pm.MedicineId,
-                Dosage: pm.Dosage,
-                Quantity: pm.Quantity,
-                Unit: pm.Unit,
-                Instructions: pm.Instructions,
-                ItemNotes: pm.ItemNotes,
-                Medicine: new MedicineDto
-                (
-                    Id: med.Id,
-                    Name: med.Name,
-                    GenericName: med.GenericName,
-                    Strength: med.Strength,
-                    Manufacturer: med.Manufacturer,
-                    Description: med.Description
-                )
-            );
-            resultDto.Items.Add(pmDto);
-        }
         
         return resultDto;
     }

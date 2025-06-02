@@ -6,5 +6,5 @@ public record CreatePrescriptionMedicationDto(
     int Quantity,
     string? Unit,
     string Instructions,
-    string? ItemNotes
+    string? ItemNotes = null
     );
