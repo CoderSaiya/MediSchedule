@@ -13,12 +13,12 @@ import { AppointmentCard } from "@/components/doctor-page/appointment-card"
 import { motion } from "framer-motion"
 import { format, isToday, isTomorrow, isThisWeek } from "date-fns"
 import { useGetAppointmentByDoctorQuery } from "@/api"
-import type { Appointment, StatusAppoiment } from "@/types/appointment"
+import type { Appointment, AppointmentStatus } from "@/types/appointment"
 
 export default function DoctorAppointments() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
     const [searchTerm, setSearchTerm] = useState("")
-    const [statusFilter, setStatusFilter] = useState<StatusAppoiment>("all")
+    const [statusFilter, setStatusFilter] = useState<AppointmentStatus>("all")
     const [selectedTab, setSelectedTab] = useState("today")
 
     const doctorId = localStorage.getItem("userId")
@@ -75,7 +75,7 @@ export default function DoctorAppointments() {
 
     const handleStatusFilterChange = (value: string) => {
         if (value === "all" || value === "pending" || value === "confirmed" || value === "completed") {
-            setStatusFilter(value as StatusAppoiment)
+            setStatusFilter(value as AppointmentStatus)
         }
     }
 
