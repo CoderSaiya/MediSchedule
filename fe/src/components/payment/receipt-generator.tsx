@@ -7,7 +7,7 @@ import { MedicalReceipt } from "./medical-receipt"
 import { useUploadToBlobMutation } from "@/api"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
-import {BookingData} from "@/types/appointment";
+import type { BookingData } from "@/types/appointment"
 
 interface ReceiptGeneratorProps {
     bookingData: BookingData
@@ -23,11 +23,22 @@ export function ReceiptGenerator({ bookingData, onUploadComplete }: ReceiptGener
         if (!receiptRef.current) return
 
         try {
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+
             const canvas = await html2canvas(receiptRef.current, {
                 scale: 2,
                 backgroundColor: "#ffffff",
                 useCORS: true,
                 allowTaint: true,
+                logging: true,
+                onclone: (document) => {
+                    // Đảm bảo tất cả ảnh đã load
+                    const images = document.getElementsByTagName("img")
+                    for (let i = 0; i < images.length; i++) {
+                        const img = images[i]
+                        img.setAttribute("crossOrigin", "anonymous")
+                    }
+                },
             })
 
             canvas.toBlob(async (blob) => {
@@ -55,10 +66,14 @@ export function ReceiptGenerator({ bookingData, onUploadComplete }: ReceiptGener
     }
 
     useEffect(() => {
-        if (receiptRef.current && !hasUploadedRef.current) {
-            hasUploadedRef.current = true
-            generateAndUploadReceipt()
-        }
+        const timer = setTimeout(() => {
+            if (receiptRef.current && !hasUploadedRef.current) {
+                hasUploadedRef.current = true
+                generateAndUploadReceipt()
+            }
+        }, 3000)
+
+        return () => clearTimeout(timer)
     }, [])
 
     const generateAndDownloadReceipt = async () => {
