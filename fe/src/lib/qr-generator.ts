@@ -26,7 +26,7 @@ export class QRCodeGenerator {
 
         // Tạo QR code
         const qrCodeDataURL = await QRCode.toDataURL(encryptedData, {
-            width: 300,
+            width: 500,
             margin: 2,
             color: {
                 dark: "#0F766E", // Teal color
