@@ -19,10 +19,6 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-//
-// ─── KIỂU DỮ LIỆU ─────────────────────────────────────────────────────────────────
-//
-
 interface Message {
     id: string
     content: string
