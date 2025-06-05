@@ -17,4 +17,13 @@ public class DoctorRepository(AppDbContext context) : GenericRepository<Doctor>(
             .Include(d => d.Reviews)
             .ToListAsync();
     }
+
+    public override async Task<Doctor?> GetByIdAsync(Guid id)
+    {
+        return await _context.Doctors
+            .Include(d => d.Profile)
+            .Include(d => d.Specialty)
+            .Where(d => d.Id == id)
+            .FirstOrDefaultAsync();
+    }
 }
