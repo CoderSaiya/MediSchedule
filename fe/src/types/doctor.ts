@@ -44,3 +44,9 @@ export interface CreatePrescriptionRequest {
     file: File
     items: PrescriptionMedication[];
 }
+
+export interface DoctorProfile{
+    name: string
+    specialty: string
+    avatar: string
+}
