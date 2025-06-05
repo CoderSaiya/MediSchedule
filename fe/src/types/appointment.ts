@@ -75,4 +75,4 @@ export interface Appointment {
     }
 }
 
-export type StatusAppoiment = "pending" | "confirmed" | "completed" | "all"
+export type AppointmentStatus = "pending" | "confirmed" | "completed" | "all"
