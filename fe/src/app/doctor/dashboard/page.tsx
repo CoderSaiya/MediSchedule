@@ -20,10 +20,12 @@ import { AppointmentCard } from "@/components/doctor-page/appointment-card"
 import { StatsCard } from "@/components/doctor-page/stats-card"
 import { motion } from "framer-motion"
 import {DashboardStats} from "@/types/doctor";
-import {useGetDoctorStatisticsQuery, useGetTodayAppointmentsQuery} from "@/api";
+import {useGetDoctorProfileQuery, useGetDoctorStatisticsQuery, useGetTodayAppointmentsQuery} from "@/api";
 import {Appointment} from "@/types/appointment";
 import {StatDoctor} from "@/types";
 import {QRScanner} from "@/components/doctor-page/qr-scanner";
+import {useSelector} from "react-redux";
+import {RootState} from "@/store";
 
 export default function DoctorDashboard() {
     const [selectedTab, setSelectedTab] = useState("overview")
@@ -37,18 +39,21 @@ export default function DoctorDashboard() {
     })
     const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([])
 
+    const doctorId = useSelector((state: RootState) => state.auth.userId);
 
     const {
         data: statisticsResponse,
         error: statisticsError,
         isLoading: statisticsLoading,
         refetch: statisticsRefetch,
-    } = useGetDoctorStatisticsQuery("ade33dc5-69b4-4f67-8203-1cfff95d49d6")
+    } = useGetDoctorStatisticsQuery(doctorId as string)
     const {
         data: appointmentResponse,
         error: appointmentError,
         isLoading: appointmentLoading,
-        refetch: appointmentRefetch} = useGetTodayAppointmentsQuery("ade33dc5-69b4-4f67-8203-1cfff95d49d6")
+        refetch: appointmentRefetch} = useGetTodayAppointmentsQuery(doctorId as string)
+
+    const {data: profileResponse} = useGetDoctorProfileQuery(doctorId as string)
 
 
     useEffect(() => {
@@ -141,7 +146,7 @@ export default function DoctorDashboard() {
             <div className="mb-8">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Chào mừng, BS. Nguyễn Văn An</h1>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Chào mừng, {profileResponse?.data.name ?? ""}</h1>
                         <p className="text-gray-600">
                             Hôm nay là{" "}
                             {new Date().toLocaleDateString("vi-VN", {
