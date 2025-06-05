@@ -14,20 +14,21 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell, Search, Settings, User, LogOut, Heart, MessageSquare, Calendar, HelpCircle } from "lucide-react"
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "@/store";
+import {logout} from "@/store/slices/authSlice";
+import {DoctorProfile} from "@/types/doctor";
 
 interface DoctorHeaderProps {
-    doctorInfo: {
-        name?: string
-        specialty?: string
-        avatar?: string
-    }
+    doctorInfo: DoctorProfile
 }
 
 export default function Header({ doctorInfo }: DoctorHeaderProps) {
     const [notifications] = useState(3)
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleLogout = () => {
-        localStorage.removeItem("authToken")
+        dispatch(logout());
         window.location.href = "/login"
     }
 
@@ -126,7 +127,7 @@ export default function Header({ doctorInfo }: DoctorHeaderProps) {
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={doctorInfo?.avatar || "/placeholder.svg"} alt="Doctor" />
+                                    <AvatarImage src={doctorInfo?.avatar} alt="Doctor" />
                                     <AvatarFallback className="bg-teal-100 text-teal-700">BS</AvatarFallback>
                                 </Avatar>
                             </Button>
