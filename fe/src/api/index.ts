@@ -8,7 +8,13 @@ import {GetTimeSlotsParams, TimeSlot} from "@/types/slot";
 import {MomoRequest, PaymentData, PaymentStatusResponse} from "@/types/payment";
 import {Appointment, CreateAppointmentRequest} from "@/types/appointment";
 import {Doctor} from "@/types/user";
-import {CreatePrescriptionRequest, CreatePrescriptionResponse, DashboardStats, MedicineDto} from "@/types/doctor";
+import {
+    CreatePrescriptionRequest,
+    CreatePrescriptionResponse,
+    DashboardStats,
+    DoctorProfile,
+    MedicineDto
+} from "@/types/doctor";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -202,6 +208,12 @@ export const api = createApi({
                 method: "GET",
             })
         }),
+        getDoctorProfile: builder.query<Response<DoctorProfile>, string>({
+            query: (id) => ({
+                url: `Doctor/profile/${id}`,
+                method: "GET",
+            })
+        }),
     }),
 });
 
@@ -222,4 +234,5 @@ export const {
     useUpdateAppointmentStatusMutation,
     useCreatePrescriptionMutation,
     useGetMedicinesQuery,
+    useGetDoctorProfileQuery,
 } = api;
