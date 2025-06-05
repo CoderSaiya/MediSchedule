@@ -70,8 +70,10 @@ var app = builder.Build();
 
 app.MapControllers();
 
+app.UseCors();
+
 app.MapHub<NotificationHub>("/hubs/notifications");
-app.MapHub<ChatHub>("/hubs/chats");
+app.MapHub<ChatHub>("/chathub");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -79,8 +81,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseCors();
 
 app.UseHttpsRedirection();
 
