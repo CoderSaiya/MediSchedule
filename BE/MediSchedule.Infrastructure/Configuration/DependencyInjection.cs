@@ -6,6 +6,7 @@ using MediSchedule.Infrastructure.Persistence;
 using MediSchedule.Infrastructure.Services;
 using System.Reflection;
 using MediatR;
+using MediSchedule.Infrastructure.Hubs;
 using MediSchedule.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -54,9 +55,10 @@ public static class DependencyInjection
        services.AddScoped<IChatService, ChatService>();
        services.AddScoped<IPaymentGateway, MomoGateway>();
        
-       services.AddHttpClient<IPaymentGateway, MomoGateway>(client => {
-       });
-
+       // services.AddHttpClient<IPaymentGateway, MomoGateway>(client => {
+       // });
+       // services.AddHttpClient<ChatHub>();
+       services.AddHttpClient();
 
        services.AddScoped<IUnitOfWork, UnitOfWork>();
         
