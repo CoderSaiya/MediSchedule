@@ -3,6 +3,7 @@ using MediSchedule.Application.DTOs;
 using MediSchedule.Application.UseCases.Appointments.Queries;
 using MediSchedule.Application.UseCases.Medicines.Queries;
 using MediSchedule.Application.UseCases.Prescriptions.Commands;
+using MediSchedule.Application.UseCases.Profiles.Queries;
 using MediSchedule.Application.UseCases.Statistics.Queries;
 using MediSchedule.Domain.Specifications;
 using Microsoft.AspNetCore.Mvc;
@@ -77,5 +78,14 @@ public class DoctorController(IMediator mediator) : Controller
             new GetMedicinesQuery());
         
         return Ok(GlobalResponse<IEnumerable<MedicineResponse>>.Success(medicines));
+    }
+
+    [HttpGet("profile/{doctorId:guid}")]
+    public async Task<IActionResult> GetProfile([FromRoute] Guid doctorId)
+    {
+        var profile = await mediator.Send(
+            new GetDoctorProfileQuery(doctorId));
+
+        return Ok(GlobalResponse<DoctorProfileResponse>.Success(profile));
     }
 }
