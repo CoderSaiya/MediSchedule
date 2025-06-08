@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MediSchedule.Application.DTOs;
+using MediSchedule.Application.UseCases.Appointments.Commands;
 using MediSchedule.Application.UseCases.Appointments.Queries;
 using MediSchedule.Application.UseCases.Medicines.Queries;
 using MediSchedule.Application.UseCases.Prescriptions.Commands;
@@ -87,5 +88,23 @@ public class DoctorController(IMediator mediator) : Controller
             new GetDoctorProfileQuery(doctorId));
 
         return Ok(GlobalResponse<DoctorProfileResponse>.Success(profile));
+    }
+
+    [HttpPut("appointment/status/{appointmentId:guid}")]
+    public async Task<IActionResult> UpdateAppointmentStatus(
+        [FromRoute] Guid appointmentId,
+        [FromForm] string status)
+    {
+        try
+        {
+            var id = await mediator.Send(
+                new UpdateAppointmentStatusCommand(appointmentId, status));
+            
+            return Ok(GlobalResponse<string>.Success($"Appointment status with ID {appointmentId} updated to {status}"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(GlobalResponse<string>.Error(ex.Message));
+        }
     }
 }
