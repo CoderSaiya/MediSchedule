@@ -3,6 +3,7 @@ using MediSchedule.Application.DTOs;
 using MediSchedule.Application.UseCases.Appointments.Queries;
 using MediSchedule.Application.UseCases.Doctors.Commands;
 using MediSchedule.Application.UseCases.Medicines.Commands;
+using MediSchedule.Application.UseCases.Monitors.Queries;
 using MediSchedule.Application.UseCases.Notifications.Commands;
 using MediSchedule.Application.UseCases.Users.Queries;
 using MediSchedule.Domain.Entities;
@@ -100,6 +101,13 @@ public class AdminController(IMediator mediator) : Controller
         {
             return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
         }
-        
+    }
+    
+    [HttpGet("db-stats")]
+    public async Task<ActionResult<DatabaseStatsResponse>> GetDatabaseStats()
+    {
+        var stats = await mediator.Send(
+            new GetDatabaseStatsQuery());
+        return Ok(stats);
     }
 }
