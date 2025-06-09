@@ -108,6 +108,14 @@ public class AdminController(IMediator mediator) : Controller
     {
         var stats = await mediator.Send(
             new GetDatabaseStatsQuery());
-        return Ok(stats);
+        return Ok(GlobalResponse<DatabaseStatsResponse>.Success(stats));
+    }
+    
+    [HttpGet("sys-stats")]
+    public async Task<ActionResult<SystemStatsResponse>> GetSystemStats()
+    {
+        var stats = await mediator.Send(
+            new GetSystemStatsQuery());
+        return Ok(GlobalResponse<SystemStatsResponse>.Success(stats));
     }
 }
