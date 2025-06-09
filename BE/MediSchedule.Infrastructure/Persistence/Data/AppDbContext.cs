@@ -21,6 +21,7 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<Prescription> Prescriptions { get; set; }
     public DbSet<Medicine> Medicines { get; set; }
     public DbSet<PrescriptionMedication> PrescriptionMedications { get; set; }
+    public DbSet<Hospital> Hospitals { get; set; }
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
@@ -52,5 +53,27 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<Slot>()
             .HasIndex(s => s.DoctorId)
             .IsUnique(false);
+        
+        modelBuilder.Entity<Hospital>(hospital =>
+        {
+            hospital.OwnsOne(u => u.Coordinates, e =>
+            {
+                e.Property(x => x.Latitude).HasColumnType("double precision");
+                e.Property(x => x.Longitude).HasColumnType("double precision");
+            });
+        });
+        
+        modelBuilder.Entity<Doctor>(entity =>
+        {
+            entity.HasOne(d => d.Hospital)
+                .WithMany(h => h.Doctors)
+                .HasForeignKey(d => d.HospitalId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(d => d.Specialty)
+                .WithMany()
+                .HasForeignKey(d => d.SpecialtyId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }
