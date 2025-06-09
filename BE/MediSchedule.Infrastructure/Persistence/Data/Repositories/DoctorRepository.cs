@@ -26,4 +26,11 @@ public class DoctorRepository(AppDbContext context) : GenericRepository<Doctor>(
             .Where(d => d.Id == id)
             .FirstOrDefaultAsync();
     }
+    
+    public async Task<bool> IsLicenseUniqueAsync(string licenseNumber, Guid? excludeId = null)
+    {
+        return !await _context.Doctors
+            .AnyAsync(d => d.LicenseNumber == licenseNumber && 
+                           (excludeId == null || d.Id != excludeId));
+    }
 }

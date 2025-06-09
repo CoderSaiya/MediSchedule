@@ -2,6 +2,7 @@
 using MediSchedule.Application.DTOs;
 using MediSchedule.Application.UseCases.Appointments.Queries;
 using MediSchedule.Application.UseCases.Doctors.Commands;
+using MediSchedule.Application.UseCases.Hospitals.Commands;
 using MediSchedule.Application.UseCases.Medicines.Commands;
 using MediSchedule.Application.UseCases.Monitors.Queries;
 using MediSchedule.Application.UseCases.Notifications.Commands;
@@ -117,5 +118,43 @@ public class AdminController(IMediator mediator) : Controller
         var stats = await mediator.Send(
             new GetSystemStatsQuery());
         return Ok(GlobalResponse<SystemStatsResponse>.Success(stats));
+    }
+
+    [HttpPost("hospital")]
+    public async Task<IActionResult> CreateHospital([FromForm] CreateHospitalRequest request)
+    {
+        try
+        {
+            await mediator.Send(
+                new CreateHospitalCommand(request));
+            
+            return Ok(GlobalResponse<string>.Success("Hospital created successfully."));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(e.Message, 500));
+        }
+    }
+    
+    [HttpPut("hospital/{hospitalId:guid}/add-doctor")]
+    public async Task<IActionResult> AddDoctorsToHospital(
+        [FromRoute] Guid hospitalId,
+        [FromForm] List<Guid> doctorIds
+        )
+    {
+        try
+        {
+            var addedDoctorIds = (await mediator.Send(
+                new AddDoctorCommand(hospitalId, doctorIds))).ToList();
+            
+            return Ok(GlobalResponse<IEnumerable<Guid>>.Success(
+                data: addedDoctorIds,
+                message: $"{addedDoctorIds.Count()} doctors added successfully"
+            ));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(e.Message, 500));
+        }
     }
 }
