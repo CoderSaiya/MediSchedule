@@ -28,7 +28,7 @@ model = NeuralNet(input_size, hidden_size, output_size)
 model.load_state_dict(model_state)
 model.eval()
 
-with open('intents.json', 'r') as f:
+with open("intents.json", encoding="utf-8") as f:
     intents = json.load(f)
 
 # Định nghĩa endpoint POST /chat
