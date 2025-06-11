@@ -20,10 +20,10 @@ public class SpecialtyController(IMediator mediator) : Controller
         return Ok(GlobalResponse<IEnumerable<SpecialtyResponse>>.Success(specialties));
     }
     
-    [HttpGet("with-doctors")]
-    public async Task<IActionResult> GetSpecialtiesWithDoctor()
+    [HttpGet("{hospitalId:guid}/with-doctors")]
+    public async Task<IActionResult> GetSpecialtiesWithDoctor([FromRoute] Guid hospitalId)
     {
-        var specialties = await mediator.Send(new GetSpecialtiesWithDoctorQuery());
+        var specialties = await mediator.Send(new GetSpecialtiesWithDoctorQuery(hospitalId));
         
         return Ok(GlobalResponse<IEnumerable<SpecialtyWithDoctorResponse>>.Success(specialties));
     }
