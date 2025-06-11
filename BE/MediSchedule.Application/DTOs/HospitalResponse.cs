@@ -5,6 +5,7 @@ namespace MediSchedule.Application.DTOs;
 public record HospitalResponse(
     Guid Id,
     string Name,
+    string Address,
     string Phone,
     string Email,
     string Description,

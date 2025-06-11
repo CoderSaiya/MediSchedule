@@ -14,6 +14,7 @@ public class GetHospitalsHandler(
             Id: hospital.Id,
             Name: hospital.Name,
             Phone: hospital.Phone,
+            Address: hospital.Address,
             Email: hospital.Email,
             Description: hospital.Description,
             Coordinates: hospital.Coordinates,
