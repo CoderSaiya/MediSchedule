@@ -69,9 +69,9 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
                 .WithMany(h => h.Doctors)
                 .HasForeignKey(d => d.HospitalId)
                 .OnDelete(DeleteBehavior.SetNull);
-
+            
             entity.HasOne(d => d.Specialty)
-                .WithMany()
+                .WithMany(s => s.Doctors)
                 .HasForeignKey(d => d.SpecialtyId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
