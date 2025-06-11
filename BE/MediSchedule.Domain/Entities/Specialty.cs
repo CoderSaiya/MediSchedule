@@ -26,5 +26,5 @@ public class Specialty : BaseEntity
         set => FeaturesCsv = string.Join(',', value);
     }
     
-    public IEnumerable<Doctor> Doctors { get; set; } = new List<Doctor>();
+    public ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
 }
