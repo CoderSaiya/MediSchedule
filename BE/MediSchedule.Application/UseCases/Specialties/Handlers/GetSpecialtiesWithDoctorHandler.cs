@@ -13,6 +13,7 @@ public class GetSpecialtiesWithDoctorHandler(ISpecialtyRepository specialtyRepos
             Id: s.Id,
             Name: s.Name,
             DoctorNames: s.Doctors
+                .Where(d => d.HospitalId == request.HospitalId)
                 .Select(d => new DoctorDto(
                     Id: d.Id,
                     Name: $"BS. {d.Profile?.FullName ?? d.Username}",
