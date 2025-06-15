@@ -19,7 +19,7 @@ public class SendNotificationHandler(
         
         await unitOfWork.CommitAsync();
         
-        await notificationService.PushNotificationAsync(notification.UserId.ToString(), notification);
+        await notificationService.PushNotificationAsync(notification.UserId, notification);
         
         return Unit.Value;
     }
