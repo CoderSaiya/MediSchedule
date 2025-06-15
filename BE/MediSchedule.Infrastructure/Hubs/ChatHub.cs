@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Http.Json;
-using MediSchedule.Application.DTOs;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MediSchedule.Infrastructure.Hubs;
@@ -81,27 +80,25 @@ public class ChatHub(IHttpClientFactory httpClientFactory) : Hub
             {
                 Console.WriteLine("[ChatHub] Caller is User => preparing to call Python AI service");
                 var client = httpClientFactory.CreateClient();
-                var pythonUrl = "http://localhost:8001/predict"; 
+                var pythonUrl = "http://localhost:8000/predict"; 
                 
                 // Debug: kiểm tra Python URL trước khi call
-                Console.WriteLine($"[ChatHub] Posting to Python URL: {pythonUrl} with payload text='{content}'");
-                var requestPayload = new { text = content };
+                Console.WriteLine($"[ChatHub] Posting to Python URL: {pythonUrl} with payload message='{content}'");
+                var requestPayload = new { message = content };
 
                 HttpResponseMessage response = await client.PostAsJsonAsync(pythonUrl, requestPayload);
                 Console.WriteLine($"[ChatHub] Python returned status code {response.StatusCode}");
                 response.EnsureSuccessStatusCode();
 
-                var aiResult = await response.Content.ReadFromJsonAsync<AiResponse>();
+                var aiResult = await response.Content.ReadFromJsonAsync<string>();
                 if (aiResult == null)
                 {
                     Console.WriteLine("[ChatHub] aiResult deserialized to null");
                     throw new InvalidOperationException("aiResult is null");
                 }
 
-                Console.WriteLine($"[ChatHub] aiResult: disease_label={aiResult.disease_label}, specialty_title={aiResult.specialty_title}, confidence={aiResult.confidence}");
-                string botContent = $"Chẩn đoán: {aiResult.disease_label}. " +
-                                    $"Khuyến nghị khoa: {aiResult.specialty_title}. " +
-                                    $"Độ tin cậy: {aiResult.confidence:P1}.";
+                Console.WriteLine($"[ChatHub] aiResult: ${aiResult}");
+                string botContent = $"{aiResult}";
 
                 var payloadAi = new
                 {
