@@ -55,7 +55,7 @@ public class AdminController(IMediator mediator) : Controller
     }
     
     [HttpPost("doctor")]
-    public async Task<IActionResult> CreateDoctor([FromBody] CreateDoctorRequest request)
+    public async Task<IActionResult> CreateDoctor([FromForm] CreateDoctorRequest request)
     {
         try
         {
