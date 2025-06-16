@@ -22,20 +22,21 @@ namespace MediSchedule.Application.UseCases.Monitors.Handlers
             // Lấy CPU % từ sys.dm_os_ring_buffers
             const string cpuSql = @"
                 SELECT TOP 1
-                    CAST(
-                      record.value('(./Record/SchedulerMonitorEvent/@CPUUtilization)[1]', 'int')
-                      AS FLOAT
-                    ) AS CpuPercent
-                FROM
-                (
-                    SELECT CONVERT(xml, record) AS Record
+                    x.ring_xml.value('(/Record/SchedulerMonitorEvent/SystemHealth/ProcessUtilization)[1]', 'INT') AS ProcessCPUPercent,
+                    x.ring_xml.value('(/Record/SchedulerMonitorEvent/SystemHealth/SystemIdle)[1]', 'INT') AS SystemIdlePercent,
+                    100 
+                      - x.ring_xml.value('(/Record/SchedulerMonitorEvent/SystemHealth/SystemIdle)[1]', 'INT') AS SystemCPUPercent
+                FROM (
+                    SELECT CONVERT(XML, record) AS ring_xml
                     FROM sys.dm_os_ring_buffers
                     WHERE ring_buffer_type = 'RING_BUFFER_SCHEDULER_MONITOR'
                       AND record LIKE '%<SystemHealth>%'
-                ) AS x;
-            ";
+                ) AS x
+                ORDER BY 
+                    x.ring_xml.value('(/Record/@time)[1]', 'BIGINT') DESC;
+                ";
 
-            // Lấy Disk % (giữ nguyên)
+            // Lấy Disk %
             const string diskSql = @"
                 SELECT 
                     CAST(
@@ -78,11 +79,18 @@ namespace MediSchedule.Application.UseCases.Monitors.Handlers
             await using (var cpuCmd = new SqlCommand(cpuSql, conn))
             {
                 cpuCmd.CommandTimeout = 30;
-                var result = await cpuCmd.ExecuteScalarAsync(cancellationToken);
-                if (result != null && result != DBNull.Value)
+                await using var reader = await cpuCmd.ExecuteReaderAsync(cancellationToken);
+                if (await reader.ReadAsync(cancellationToken))
                 {
-                    cpuPercent = Convert.ToDouble(result);
-                    cpuPercent = Math.Clamp(cpuPercent, 0, 100);
+                    if (!reader.IsDBNull(2))
+                    {
+                        cpuPercent = reader.GetInt32(2);
+                        cpuPercent = Math.Clamp(cpuPercent, 0, 100);
+                    }
+                    else
+                    {
+                        cpuPercent = 0;
+                    }
                 }
             }
             
