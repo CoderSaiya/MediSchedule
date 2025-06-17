@@ -1,11 +1,11 @@
-import UserTable from "@/components/admin/user";
+import DoctorTable from "@/components/admin/doctorTable";
 
-const ManageUserPage = () => {
+const ManageDoctorPage = () => {
     return (
         <div>
-            Cho bình làm
+            <DoctorTable />
         </div>
     )
 }
 
-export default ManageUserPage;
+export default ManageDoctorPage;

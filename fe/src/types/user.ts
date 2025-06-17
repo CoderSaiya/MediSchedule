@@ -14,3 +14,7 @@ export interface Doctor {
     avatar: string;
     available: boolean;
 }
+
+
+
+

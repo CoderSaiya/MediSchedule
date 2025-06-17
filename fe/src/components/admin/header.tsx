@@ -35,7 +35,7 @@ const AdminHeader = () => {
                 type="text"
                 icon={collapseMenu ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
                 onClick={() => setCollapseMenu(!collapseMenu)}
-                className="text-base w-16 h-16"
+                className="text-base w-16 h-16  text-teal-500 hover:!bg-teal-500 hover:!text-white "
             />
             <Dropdown menu={{ items }}>
                 <a
@@ -43,8 +43,13 @@ const AdminHeader = () => {
                     className="mr-5 text-inherit"
                 >
                     <Space>
-                        Chào mừng Admin
-                        <ChevronDown size={16} />
+                        <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                            Chào mừng Admin
+                        </span>
+                        <ChevronDown
+                            size={16}
+                            className="text-teal-600"
+                        />
                     </Space>
                 </a>
             </Dropdown>
