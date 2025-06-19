@@ -2,11 +2,7 @@
 using MediSchedule.Domain.Interfaces;
 using MediSchedule.Infrastructure.Persistence.Data;
 using MediSchedule.Infrastructure.Persistence.Data.Repositories;
-using MediSchedule.Infrastructure.Persistence;
 using MediSchedule.Infrastructure.Services;
-using System.Reflection;
-using MediatR;
-using MediSchedule.Infrastructure.Hubs;
 using MediSchedule.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -55,6 +51,7 @@ public static class DependencyInjection
        services.AddScoped<INotificationService, NotificationService>();
        services.AddScoped<IChatService, ChatService>();
        services.AddScoped<IPaymentGateway, MomoGateway>();
+       services.AddSingleton<EndpointRoleMappingService>();
        
        // services.AddHttpClient<IPaymentGateway, MomoGateway>(client => {
        // });
