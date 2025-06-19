@@ -2,5 +2,5 @@
 
 public interface INotificationService
 {
-    Task PushNotificationAsync(string userId, object payload);
+    Task PushNotificationAsync(Guid userId, object payload);
 }
