@@ -26,13 +26,31 @@ const DoctorTable = () => {
             key: 'image',
             align: 'center',
             width: '10%',
-            render: (image: string) => (
-                <img
-                    src={image}
-                    alt="Doctor"
-                    className="w-20 h-20 object-cover rounded-md mx-auto border"
-                />
-            ),
+            render: (image: string) => {
+                if (!image || image.trim() === '') {
+                    return (
+                        <div className="w-20 h-20 bg-gray-200 rounded-md mx-auto border flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">No Image</span>
+                        </div>
+                    );
+                }
+
+                return (
+                    <img
+                        src={image}
+                        alt="Doctor"
+                        className="w-20 h-20 object-cover rounded-md mx-auto border"
+                        onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                                parent.innerHTML = '<div class="w-20 h-20 bg-gray-200 rounded-md mx-auto border flex items-center justify-center"><span class="text-gray-400 text-xs">No Image</span></div>';
+                            }
+                        }}
+                    />
+                );
+            },
         },
         {
             title: 'Tên bác sĩ',
