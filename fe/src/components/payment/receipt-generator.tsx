@@ -1,6 +1,6 @@
 "use client"
 
-import {useEffect, useRef} from "react"
+import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Download, Upload, Loader2 } from "lucide-react"
 import { MedicalReceipt } from "./medical-receipt"
@@ -49,7 +49,7 @@ export function ReceiptGenerator({ bookingData, onUploadComplete }: ReceiptGener
                         const response = await uploadToBlob({
                             file: blob,
                             containerName: containerName, appointmentId:
-                            bookingData.appointmentId
+                                bookingData.appointmentId
                         }).unwrap()
 
                         if (response.data?.url && onUploadComplete) {
