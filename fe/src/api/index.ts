@@ -15,6 +15,7 @@ import {
     DoctorProfile,
     MedicineDto
 } from "@/types/doctor";
+import {Hospital} from "@/types/hospital";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -84,8 +85,8 @@ export const api = createApi({
         getSpecialties: builder.query<Response<Specialty[]>, void>({
             query: () => ({ url: "Specialty", method: "GET" }),
         }),
-        getSpecialtiesWithDoctor: builder.query<Response<SpecialtyWithDoctor[]>, void>({
-            query: () => ({url: "Specialty/with-doctors", method: "GET"})
+        getSpecialtiesWithDoctor: builder.query<Response<SpecialtyWithDoctor[]>, {hospitalId: string}>({
+            query: ({hospitalId}) => ({url: `Specialty/${hospitalId}/with-doctors`, method: "GET"})
         }),
         getTimeSlots: builder.query<Response<TimeSlot[]>, GetTimeSlotsParams>({
             query: ({ doctorId, date }) => ({
@@ -150,7 +151,7 @@ export const api = createApi({
             })
         }),
         updateAppointmentStatus :builder.mutation<
-            Response<Appointment>,
+            Response<string>,
             {
                 appointmentId: string;
                 status: "confirmed" | "completed";
@@ -160,7 +161,7 @@ export const api = createApi({
                 const formData = new FormData()
                 formData.append('status', status)
                 return {
-                    url: `Doctor/update-appointment/${appointmentId}`,
+                    url: `Doctor/appointment/status/${appointmentId}`,
                     method: "POST",
                     body: formData,
                 }
@@ -214,6 +215,12 @@ export const api = createApi({
                 method: "GET",
             })
         }),
+        getHospitals: builder.query<Response<Hospital[]>, void>({
+            query: () => ({
+                url: `Hospital`,
+                method: "GET",
+            })
+        }),
     }),
 });
 
@@ -235,4 +242,5 @@ export const {
     useCreatePrescriptionMutation,
     useGetMedicinesQuery,
     useGetDoctorProfileQuery,
+    useGetHospitalsQuery
 } = api;

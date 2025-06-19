@@ -9,12 +9,18 @@
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/admin/doctorTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/doctorTable.tsx" afterDir="false" />
     <list default="true" id="f0955436-8c2b-4cfc-ba9b-a1b04d971438" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../BE/MediSchedule.API/Controllers/DoctorController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../BE/MediSchedule.API/Controllers/DoctorController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../BE/MediSchedule.API/MediSchedule.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../BE/MediSchedule.API/MediSchedule.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../BE/MediSchedule.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../BE/MediSchedule.API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../BE/MediSchedule.Infrastructure/Configuration/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../BE/MediSchedule.Infrastructure/Configuration/DependencyInjection.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/doctor/appointments/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/doctor/appointments/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/doctor/dashboard/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/doctor/dashboard/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/doctor-page/appointment-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/doctor-page/appointment-card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/doctor-page/prescription-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/doctor-page/prescription-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(root)/booking/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(root)/booking/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/providers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/providers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/doctor-page/sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/doctor-page/sidebar.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,6 +104,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\Documents\WorkSpace\ProjectNET\git\MediSchedule\fe\src\app\(root)" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -126,7 +137,15 @@
       <updated>1748673925321</updated>
       <workItem from="1748673929088" duration="11910000" />
       <workItem from="1748748561246" duration="23419000" />
-      <workItem from="1748830324453" duration="12721000" />
+      <workItem from="1748830324453" duration="22978000" />
+      <workItem from="1748927729082" duration="11607000" />
+      <workItem from="1748999905630" duration="21416000" />
+      <workItem from="1749184115178" duration="696000" />
+      <workItem from="1749262200669" duration="2012000" />
+      <workItem from="1749454486999" duration="3614000" />
+      <workItem from="1749459243162" duration="2607000" />
+      <workItem from="1749567407243" duration="1218000" />
+      <workItem from="1750332624992" duration="1827000" />
     </task>
     <servers />
   </component>

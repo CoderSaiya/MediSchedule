@@ -7,14 +7,9 @@ import { Badge } from "@/components/ui/badge"
 import {
     Activity,
     Calendar,
-    Users,
-    FileText,
-    MessageSquare,
-    Settings,
     BarChart3,
     Clock,
     Stethoscope,
-    Pill,
     ChevronLeft,
     ChevronRight,
 } from "lucide-react"
@@ -46,54 +41,19 @@ export default function Sidebar({ doctorInfo }: DoctorSidebarProps) {
             badge: "5",
         },
         {
-            id: "patients",
-            label: "Bệnh nhân",
-            icon: Users,
-            href: "/doctor/patients",
-            badge: null,
-        },
-        {
-            id: "consultations",
-            label: "Tư vấn",
-            icon: MessageSquare,
-            href: "/doctor/consultations",
-            badge: "2",
-        },
-        {
-            id: "prescriptions",
-            label: "Đơn thuốc",
-            icon: Pill,
-            href: "/doctor/prescriptions",
-            badge: null,
-        },
-        {
-            id: "medical-records",
-            label: "Hồ sơ y tế",
-            icon: FileText,
-            href: "/doctor/medical-records",
-            badge: null,
-        },
-        {
             id: "schedule",
             label: "Lịch làm việc",
             icon: Clock,
             href: "/doctor/schedule",
             badge: null,
         },
-        {
-            id: "reports",
-            label: "Báo cáo",
-            icon: BarChart3,
-            href: "/doctor/reports",
-            badge: null,
-        },
-        {
-            id: "settings",
-            label: "Cài đặt",
-            icon: Settings,
-            href: "/doctor/settings",
-            badge: null,
-        },
+        // {
+        //     id: "reports",
+        //     label: "Báo cáo",
+        //     icon: BarChart3,
+        //     href: "/doctor/reports",
+        //     badge: null,
+        // },
     ]
 
     return (
