@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -14,28 +14,75 @@ import {
     MessageSquare,
     Bell,
     Filter,
-    Star,
+    Star, Loader2, AlertCircle,
 } from "lucide-react"
 import { AppointmentCard } from "@/components/doctor-page/appointment-card"
 import { StatsCard } from "@/components/doctor-page/stats-card"
 import { motion } from "framer-motion"
+import {DashboardStats} from "@/types/doctor";
+import {useGetDoctorProfileQuery, useGetDoctorStatisticsQuery, useGetTodayAppointmentsQuery} from "@/api";
+import {Appointment} from "@/types/appointment";
+import {StatDoctor} from "@/types";
+import {QRScanner} from "@/components/doctor-page/qr-scanner";
+import {useSelector} from "react-redux";
+import {RootState} from "@/store";
 
 export default function DoctorDashboard() {
     const [selectedTab, setSelectedTab] = useState("overview")
+    const [stats, setStats] = useState<DashboardStats>({
+        totalAppointmentsToday: 0,
+        appointmentsDelta: 0,
+        totalPendingPatients: 0,
+        completedAppointmentsToday: 0,
+        completedDelta: 0,
+        averageRating: 0
+    })
+    const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([])
 
-    const stats = [
+    const doctorId = useSelector((state: RootState) => state.auth.userId);
+
+    const {
+        data: statisticsResponse,
+        error: statisticsError,
+        isLoading: statisticsLoading,
+        refetch: statisticsRefetch,
+    } = useGetDoctorStatisticsQuery(doctorId as string)
+    const {
+        data: appointmentResponse,
+        error: appointmentError,
+        isLoading: appointmentLoading,
+        refetch: appointmentRefetch} = useGetTodayAppointmentsQuery(doctorId as string)
+
+    const {data: profileResponse} = useGetDoctorProfileQuery(doctorId as string)
+
+
+    useEffect(() => {
+        if (statisticsResponse) {
+            setStats(statisticsResponse?.data)
+        }
+    }, [statisticsResponse])
+
+    useEffect(() => {
+        if (appointmentResponse) {
+            setTodayAppointments(appointmentResponse?.data)
+        }
+    }, [appointmentResponse])
+
+    console.log(stats)
+
+    const statCards: StatDoctor[] = [
         {
             title: "Lịch hẹn hôm nay",
-            value: "12",
-            change: "+2 so với hôm qua",
-            trend: "up",
+            value: stats.totalAppointmentsToday.toString(),
+            change: `${stats.appointmentsDelta >= 0 ? '+' : ''}${stats.appointmentsDelta} so với hôm qua`,
+            trend: stats.appointmentsDelta > 0 ? "up" : stats.appointmentsDelta < 0 ? "down" : "neutral",
             icon: Calendar,
             color: "text-teal-600",
             bgColor: "bg-teal-50",
         },
         {
             title: "Bệnh nhân chờ",
-            value: "5",
+            value: stats.totalPendingPatients.toString(),
             change: "Đang chờ khám",
             trend: "neutral",
             icon: Users,
@@ -44,101 +91,83 @@ export default function DoctorDashboard() {
         },
         {
             title: "Hoàn thành",
-            value: "7",
-            change: "+3 so với hôm qua",
-            trend: "up",
+            value: stats.completedAppointmentsToday.toString(),
+            change: `${stats.completedDelta >= 0 ? '+' : ''}${stats.completedDelta} so với hôm qua`,
+            trend: stats.completedDelta > 0 ? "up" : stats.completedDelta < 0 ? "down" : "neutral",
             icon: CheckCircle,
             color: "text-emerald-600",
             bgColor: "bg-emerald-50",
         },
         {
             title: "Đánh giá TB",
-            value: "4.9",
-            change: "Từ 45 đánh giá",
-            trend: "up",
+            value: stats.averageRating.toFixed(1),
+            change: "Đánh giá trung bình",
+            trend: "neutral",
             icon: Star,
             color: "text-yellow-600",
             bgColor: "bg-yellow-50",
         },
     ]
 
-    const todayAppointments = [
-        {
-            id: "1",
-            patientName: "Nguyễn Văn A",
-            patientAge: 35,
-            appointmentTime: "09:00",
-            appointmentType: "Khám tổng quát",
-            status: "confirmed",
-            symptoms: "Đau đầu, chóng mặt",
-            phone: "0901234567",
-            isUrgent: false,
-        },
-        {
-            id: "2",
-            patientName: "Trần Thị B",
-            patientAge: 28,
-            appointmentTime: "09:30",
-            appointmentType: "Tái khám",
-            status: "waiting",
-            symptoms: "Theo dõi huyết áp",
-            phone: "0907654321",
-            isUrgent: false,
-        },
-        {
-            id: "3",
-            patientName: "Lê Minh C",
-            patientAge: 42,
-            appointmentTime: "10:00",
-            appointmentType: "Khám cấp cứu",
-            status: "urgent",
-            symptoms: "Đau ngực, khó thở",
-            phone: "0912345678",
-            isUrgent: true,
-        },
-        {
-            id: "4",
-            patientName: "Phạm Thị D",
-            patientAge: 55,
-            appointmentTime: "10:30",
-            appointmentType: "Tư vấn",
-            status: "confirmed",
-            symptoms: "Tư vấn dinh dưỡng",
-            phone: "0923456789",
-            isUrgent: false,
-        },
-        {
-            id: "5",
-            patientName: "Hoàng Văn E",
-            patientAge: 38,
-            appointmentTime: "11:00",
-            appointmentType: "Khám định kỳ",
-            status: "completed",
-            symptoms: "Kiểm tra sức khỏe định kỳ",
-            phone: "0934567890",
-            isUrgent: false,
-        },
-    ]
+    const handleQRScanSuccess = (appointmentId: string) => {
+        statisticsRefetch()
+        console.log("QR scan successful for appointment:", appointmentId)
+    }
+
+    if (statisticsLoading && appointmentLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="text-center">
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-teal-600" />
+                    <p className="text-gray-600">Đang tải dữ liệu dashboard...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (appointmentError && statisticsError) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <Card className="border-red-200 bg-red-50">
+                    <CardContent className="p-8 text-center">
+                        <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-red-800 mb-2">Lỗi tải dữ liệu</h3>
+                        <p className="text-red-600 mb-4">Không thể tải thông tin dashboard</p>
+                        <Button onClick={() => window.location.reload()}>Thử lại</Button>
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
 
     return (
         <>
             {/* Welcome Section */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Chào mừng, BS. Nguyễn Văn An</h1>
-                <p className="text-gray-600">
-                    Hôm nay là{" "}
-                    {new Date().toLocaleDateString("vi-VN", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                    })}
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Chào mừng, {profileResponse?.data.name ?? ""}</h1>
+                        <p className="text-gray-600">
+                            Hôm nay là{" "}
+                            {new Date().toLocaleDateString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                            })}
+                        </p>
+                    </div>
+
+                    {/* QR Scanner Button */}
+                    <div className="flex items-center space-x-3">
+                        <QRScanner onScanSuccess={handleQRScanSuccess} />
+                    </div>
+                </div>
             </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {stats.map((stat, index) => (
+                {statCards.map((stat, index) => (
                     <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 20 }}
@@ -184,22 +213,34 @@ export default function DoctorDashboard() {
                                         </CardTitle>
                                         <CardDescription>{todayAppointments.length} lịch hẹn được lên lịch</CardDescription>
                                     </div>
-                                    <Button variant="outline" size="sm">
-                                        <Filter className="h-4 w-4 mr-2" />
-                                        Lọc
-                                    </Button>
+                                    <div className="flex items-center space-x-2">
+                                        <QRScanner onScanSuccess={handleQRScanSuccess} />
+                                        <Button variant="outline" size="sm">
+                                            <Filter className="h-4 w-4 mr-2" />
+                                            Lọc
+                                        </Button>
+                                    </div>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    {todayAppointments.map((appointment, index) => (
-                                        <motion.div
-                                            key={appointment.id}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ duration: 0.4, delay: index * 0.1 }}
-                                        >
-                                            <AppointmentCard appointment={appointment} />
-                                        </motion.div>
-                                    ))}
+                                    {todayAppointments.length === 0 ? (
+                                        <div className="text-center py-8">
+                                            <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                                            <h3 className="text-lg font-semibold text-gray-600 mb-2">Không có lịch hẹn nào</h3>
+                                            <p className="text-gray-500 mb-4">Hôm nay bạn chưa có lịch hẹn nào được đặt</p>
+                                            <QRScanner onScanSuccess={handleQRScanSuccess} />
+                                        </div>
+                                    ) : (
+                                        todayAppointments.map((appointment, index) => (
+                                            <motion.div
+                                                key={appointment.id}
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ duration: 0.4, delay: index * 0.1 }}
+                                            >
+                                                <AppointmentCard appointment={appointment} refetch={appointmentRefetch}/>
+                                            </motion.div>
+                                        ))
+                                    )}
                                 </CardContent>
                             </Card>
                         </div>
@@ -209,6 +250,7 @@ export default function DoctorDashboard() {
                             {/* Quick Actions */}
                             <Card>
                                 <CardHeader>
+                                    <QRScanner onScanSuccess={handleQRScanSuccess} />
                                     <CardTitle className="flex items-center space-x-2">
                                         <Stethoscope className="h-5 w-5 text-teal-600" />
                                         <span>Thao tác nhanh</span>

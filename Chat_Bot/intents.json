@@ -1,0 +1,111 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Xin chào",
+        "Chào bạn",
+        "Chào bác sĩ",
+        "Tôi cần giúp đỡ",
+        "Có ai ở đó không?"
+      ],
+      "responses": [
+        "Xin chào! Tôi là trợ lý sức khỏe AI. Bạn đang gặp triệu chứng gì?",
+        "Chào bạn! Tôi có thể giúp bạn tìm bác sĩ phù hợp. Vui lòng cho biết triệu chứng của bạn."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Tạm biệt", "Hẹn gặp lại", "Cảm ơn, tôi đi đây", "Bye"],
+      "responses": [
+        "Chúc bạn mau khỏe!",
+        "Hẹn gặp lại bạn sớm!",
+        "Cảm ơn bạn đã sử dụng dịch vụ gợi ý bác sĩ!"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["Cảm ơn", "Cảm ơn bạn", "Bạn giúp tôi rất nhiều", "Rất hữu ích"],
+      "responses": [
+        "Rất vui được giúp bạn!",
+        "Không có gì, bạn cần thêm gì không?",
+        "Tôi luôn sẵn sàng hỗ trợ!"
+      ]
+    },
+    {
+      "tag": "đau đầu",
+      "patterns": [
+        "Tôi bị đau đầu",
+        "Đau đầu kéo dài",
+        "Tôi thường xuyên đau đầu",
+        "Đau đầu nên khám khoa nào?"
+      ],
+      "responses": [
+        "Bạn nên khám chuyên khoa Thần kinh.",
+        "Gợi ý: Bác sĩ Nội thần kinh hoặc chuyên gia Thần kinh học sẽ phù hợp với bạn."
+      ]
+    },
+    {
+      "tag": "đau bụng",
+      "patterns": [
+        "Tôi bị đau bụng",
+        "Đau bụng bên trái",
+        "Đau bụng dữ dội",
+        "Đau bụng nên khám ở đâu?"
+      ],
+      "responses": [
+        "Bạn nên khám chuyên khoa Tiêu hóa.",
+        "Gợi ý: Bạn có thể tìm bác sĩ chuyên khoa Nội tiêu hóa hoặc Ngoại tổng quát nếu đau nặng."
+      ]
+    },
+    {
+      "tag": "sốt và ho",
+      "patterns": [
+        "Tôi bị sốt và ho",
+        "Tôi cảm thấy mệt mỏi và sốt",
+        "Có ho và khó thở",
+        "Bé nhà tôi bị sốt và ho"
+      ],
+      "responses": [
+        "Bạn nên khám chuyên khoa Hô hấp hoặc Nhi (nếu là trẻ em).",
+        "Gợi ý: Bác sĩ Nội hô hấp hoặc bác sĩ Nhi khoa sẽ phù hợp."
+      ]
+    },
+    {
+      "tag": "tim đập nhanh",
+      "patterns": [
+        "Tôi cảm thấy tim đập nhanh",
+        "Nhịp tim không đều",
+        "Tôi bị hồi hộp và lo lắng"
+      ],
+      "responses": [
+        "Bạn nên đến khám chuyên khoa Tim mạch.",
+        "Gợi ý: Gặp bác sĩ chuyên Tim mạch để kiểm tra nhịp tim và huyết áp."
+      ]
+    },
+    {
+      "tag": "đau khớp",
+      "patterns": [
+        "Tôi bị đau đầu gối",
+        "Khớp tôi đau khi di chuyển",
+        "Đau lưng và cứng khớp buổi sáng"
+      ],
+      "responses": [
+        "Bạn nên đến chuyên khoa Cơ xương khớp.",
+        "Gợi ý: Bác sĩ chuyên khoa Cơ xương khớp có thể giúp bạn."
+      ]
+    },
+    {
+      "tag": "vấn đề da liễu",
+      "patterns": [
+        "Tôi bị nổi mẩn đỏ",
+        "Da tôi ngứa và bong tróc",
+        "Nổi mụn và dị ứng"
+      ],
+      "responses": [
+        "Bạn nên khám chuyên khoa Da liễu.",
+        "Gợi ý: Gặp bác sĩ Da liễu để được tư vấn và kê đơn điều trị phù hợp."
+      ]
+    }
+  ]
+}

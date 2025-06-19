@@ -20,8 +20,13 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import {DoctorProfile} from "@/types/doctor";
 
-export default function Sidebar() {
+interface DoctorSidebarProps {
+    doctorInfo: DoctorProfile
+}
+
+export default function Sidebar({ doctorInfo }: DoctorSidebarProps) {
     const [isCollapsed, setIsCollapsed] = useState(false)
     const pathname = usePathname()
 
@@ -113,8 +118,8 @@ export default function Sidebar() {
                             <Stethoscope className="h-5 w-5 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">BS. Nguyễn Văn An</p>
-                            <p className="text-xs text-gray-500 truncate">Chuyên khoa Tim mạch</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">{doctorInfo?.name ?? ""}</p>
+                            <p className="text-xs text-gray-500 truncate">{doctorInfo?.specialty ?? ""}</p>
                         </div>
                     </div>
                 </div>

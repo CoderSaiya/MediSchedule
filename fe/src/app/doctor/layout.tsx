@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation"
 import Header from "@/components/doctor-page/header"
 import Sidebar from "@/components/doctor-page/sidebar"
 import { motion } from "framer-motion"
+import {useGetDoctorProfileQuery} from "@/api";
+import {useSelector} from "react-redux";
+import {RootState} from "@/store";
+import {DoctorProfile} from "@/types/doctor";
 
 interface DoctorLayoutProps {
     children: React.ReactNode
@@ -15,7 +19,6 @@ interface DoctorLayoutProps {
 export default function DoctorLayout({ children }: DoctorLayoutProps) {
     const [mounted, setMounted] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
-    const [doctorInfo, setDoctorInfo] = useState<any>(null)
     const router = useRouter()
 
     // useEffect(() => {
@@ -58,12 +61,18 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
     //     return null
     // }
 
+    const userId = useSelector((state: RootState) => state.auth.userId);
+
+    const {data: profileResponse} = useGetDoctorProfileQuery(userId as string)
+
+    const profileData = profileResponse?.data as DoctorProfile
+
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header doctorInfo={doctorInfo} />
+            <Header doctorInfo={profileData} />
 
             <div className="flex">
-                <Sidebar />
+                <Sidebar doctorInfo={profileData} />
 
                 <main className="flex-1 ml-64">
                     <motion.div

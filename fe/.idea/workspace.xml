@@ -8,6 +8,13 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/admin/doctorTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/doctorTable.tsx" afterDir="false" />
+    <list default="true" id="f0955436-8c2b-4cfc-ba9b-a1b04d971438" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../BE/MediSchedule.API/Controllers/DoctorController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../BE/MediSchedule.API/Controllers/DoctorController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/doctor/appointments/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/doctor/appointments/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/doctor/dashboard/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/doctor/dashboard/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/doctor-page/appointment-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/doctor-page/appointment-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/doctor-page/prescription-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/doctor-page/prescription-form.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +30,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="frontend" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -38,9 +50,9 @@
   }
 }</component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 2
+  &quot;associatedIndex&quot;: 4
 }</component>
-  <component name="ProjectId" id="2xcaAcEFAqrvi7ix4DnwYgHVcSW" />
+  <component name="ProjectId" id="2xqmLFsyJzMy8M9IWEDeTdp1p7j" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -72,6 +84,20 @@
       <recent name="C:\Users\admin\Documents\WorkSpace\ProjectNET\git\MediSchedule\fe\src\components\home" />
     </key>
   </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\admin\\Documents\\WorkSpace\\ProjectNET\\git\\MediSchedule\\fe\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -82,8 +108,8 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="fa37f615-365b-4704-874c-6ac3caba18ee" name="Changes" comment="" />
-      <created>1748239673831</created>
+      <changelist id="f0955436-8c2b-4cfc-ba9b-a1b04d971438" name="Changes" comment="" />
+      <created>1748673925321</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1748239673831</updated>
@@ -97,33 +123,17 @@
       <workItem from="1750043167432" duration="994000" />
       <workItem from="1750244280588" duration="13000" />
       <workItem from="1750332248502" duration="1848000" />
+      <updated>1748673925321</updated>
+      <workItem from="1748673929088" duration="11910000" />
+      <workItem from="1748748561246" duration="23419000" />
+      <workItem from="1748830324453" duration="12721000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="frontend" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
+  <component name="VcsManagerConfiguration">
+    <option name="LAST_COMMIT_MESSAGE" value="" />
   </component>
 </project>

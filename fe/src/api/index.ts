@@ -2,12 +2,19 @@ import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError} 
 import {RootState} from "@/store";
 import {TokenResponse} from "@/types/auth";
 import type {Response} from "@/types"
-import { setCredentials, updateAccessToken, logout } from "@/store/slices/authSlice";
+import { setCredentials, logout } from "@/store/slices/authSlice";
 import {Specialty, SpecialtyWithDoctor} from "@/types/specialty";
 import {GetTimeSlotsParams, TimeSlot} from "@/types/slot";
 import {MomoRequest, PaymentData, PaymentStatusResponse} from "@/types/payment";
-import {CreateAppointmentRequest, CreateAppointmentResponse} from "@/types/appointment";
+import {Appointment, CreateAppointmentRequest} from "@/types/appointment";
 import {Doctor} from "@/types/user";
+import {
+    CreatePrescriptionRequest,
+    CreatePrescriptionResponse,
+    DashboardStats,
+    DoctorProfile,
+    MedicineDto
+} from "@/types/doctor";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -59,7 +66,7 @@ export const api = createApi({
     reducerPath: "api",
     baseQuery: baseQueryWithReauth,
     endpoints: (builder) => ({
-        login: builder.mutation<TokenResponse, { username: string; password: string }>({
+        login: builder.mutation<Response<TokenResponse>, { username: string; password: string }>({
             query: (credentials) => ({
                 url: "Auth/login",
                 method: "POST",
@@ -68,7 +75,7 @@ export const api = createApi({
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;
-                    dispatch(setCredentials(data));
+                    dispatch(setCredentials(data.data));
                 } catch {
                     // ignore error
                 }
@@ -123,12 +130,96 @@ export const api = createApi({
                 url: `Public/doctors`,
                 method: "GET",
             })
-        })
+        }),
+        getDoctorStatistics: builder.query<Response<DashboardStats>, string>({
+            query: (id) => ({
+                url: `Doctor/statistics/${id}`,
+                method: "GET",
+            })
+        }),
+        getAppointmentByDoctor: builder.query<Response<Appointment[]>, string>({
+            query: (id) => ({
+                url: `Doctor/appointments/${id}`,
+                method: "GET",
+            })
+        }),
+        getTodayAppointments: builder.query<Response<Appointment[]>, string>({
+            query: (id) => ({
+                url: `Doctor/appointment-today/${id}`,
+                method: "GET",
+            })
+        }),
+        updateAppointmentStatus :builder.mutation<
+            Response<Appointment>,
+            {
+                appointmentId: string;
+                status: "confirmed" | "completed";
+            }
+        >({
+            query: ({ appointmentId, status }) => {
+                const formData = new FormData()
+                formData.append('status', status)
+                return {
+                    url: `Doctor/update-appointment/${appointmentId}`,
+                    method: "POST",
+                    body: formData,
+                }
+            },
+        }),
+        createPrescription: builder.mutation<Response<CreatePrescriptionResponse>, CreatePrescriptionRequest>({
+            query: ({ appointmentId, notes, file, items }) => {
+                const formData = new FormData()
+
+                formData.append("AppointmentId", appointmentId);
+                if (notes) {
+                    formData.append("Notes", notes);
+                }
+                formData.append("File", file);
+
+                items.forEach((item, index) => {
+                    formData.append(`Items[${index}].MedicineId`, item.medicineId);
+                    formData.append(`Items[${index}].Dosage`, item.dosage);
+                    formData.append(
+                        `Items[${index}].Quantity`,
+                        item.quantity.toString()
+                    );
+                    if (item.unit) {
+                        formData.append(`Items[${index}].Unit`, item.unit);
+                    }
+                    formData.append(
+                        `Items[${index}].Instructions`,
+                        item.instructions
+                    );
+                    if (item.itemNotes) {
+                        formData.append(`Items[${index}].ItemNotes`, item.itemNotes);
+                    }
+                });
+
+                return {
+                    url: `Doctor/create-prescription`,
+                    method: "POST",
+                    body: formData,
+                }
+            },
+        }),
+        getMedicines: builder.query<Response<MedicineDto[]>, void>({
+            query: () => ({
+                url: `Doctor/medicines`,
+                method: "GET",
+            })
+        }),
+        getDoctorProfile: builder.query<Response<DoctorProfile>, string>({
+            query: (id) => ({
+                url: `Doctor/profile/${id}`,
+                method: "GET",
+            })
+        }),
     }),
 });
 
 
 export const {
+    useLoginMutation,
     useGetSpecialtiesQuery,
     useGetSpecialtiesWithDoctorQuery,
     useGetTimeSlotsQuery,
@@ -137,4 +228,11 @@ export const {
     useCreateAppointmentMutation,
     useUploadToBlobMutation,
     useGetDoctorsQuery,
+    useGetDoctorStatisticsQuery,
+    useGetAppointmentByDoctorQuery,
+    useGetTodayAppointmentsQuery,
+    useUpdateAppointmentStatusMutation,
+    useCreatePrescriptionMutation,
+    useGetMedicinesQuery,
+    useGetDoctorProfileQuery,
 } = api;

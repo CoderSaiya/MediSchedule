@@ -49,3 +49,30 @@ export interface BookingData {
     orderId: string | undefined
     transactionId?: string
 }
+
+export interface Appointment {
+    id: string
+    doctorId: string
+    slotId: string
+    fullName: string
+    phone: string
+    email: string
+    appointmentDate: string // ISO date string
+    appointmentTime: string // (HH:mm:ss)
+    fileUrl?: string
+    reason: string
+    status: "pending" | "confirmed" | "completed"
+    doctor?: {
+        id: string
+        fullName: string
+        specialty: string
+    }
+    slot?: {
+        id: string
+        startTime: string
+        endTime: string
+        isBooked: boolean
+    }
+}
+
+export type AppointmentStatus = "pending" | "confirmed" | "completed" | "all"

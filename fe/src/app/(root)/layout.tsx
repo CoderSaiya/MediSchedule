@@ -1,5 +1,7 @@
 import {Header} from "@/components/shared/header";
 import {Footer} from "@/components/shared/footer";
+import {ChatPopup} from "@/components/shared/chat-popup";
+import type React from "react";
 
 export default function RootLayout({
                                        children,
@@ -14,6 +16,7 @@ export default function RootLayout({
                 {children}
             </main>
             <Footer />
+            <ChatPopup />
         </div>
     );
 }

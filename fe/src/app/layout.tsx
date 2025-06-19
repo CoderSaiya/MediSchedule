@@ -19,6 +19,7 @@ export default function RootLayout({
     return (
         <html lang="vi" suppressHydrationWarning>
         <head>
+            <meta charSet="UTF-8"/>
             <script
                 dangerouslySetInnerHTML={{
                     __html: `

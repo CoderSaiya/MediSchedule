@@ -1,0 +1,6 @@
+﻿using MediatR;
+using MediSchedule.Application.DTOs;
+
+namespace MediSchedule.Application.UseCases.Monitors.Queries;
+
+public record GetDatabaseStatsQuery() : IRequest<DatabaseStatsResponse>;

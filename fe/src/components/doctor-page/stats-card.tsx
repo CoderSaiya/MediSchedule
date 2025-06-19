@@ -1,20 +1,11 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { type LucideIcon, TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {StatDoctor} from "@/types";
 
-interface StatsCardProps {
-    title: string
-    value: string
-    change: string
-    trend: "up" | "down" | "neutral"
-    icon: LucideIcon
-    color: string
-    bgColor: string
-}
-
-export function StatsCard({ title, value, change, trend, icon: Icon, color, bgColor }: StatsCardProps) {
+export function StatsCard({ title, value, change, trend, icon: Icon, color, bgColor }: StatDoctor) {
     const getTrendIcon = () => {
         switch (trend) {
             case "up":

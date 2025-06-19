@@ -94,7 +94,6 @@ export default function PaymentPage() {
                 setPaymentStatus("processing")
             }
         } catch (error: any) {
-            console.error("Error creating payment:", error)
             setError(error.data?.message || "Không thể tạo thanh toán")
             setPaymentStatus("failed")
         }
