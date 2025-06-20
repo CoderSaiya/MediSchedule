@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Row, Col, Button, Select, Upload, TimePicker, message } from 'antd';
 import { ImageUp } from 'lucide-react';;
-import axios from 'axios';
+import { useCreateDoctorMutation } from '@/api';
 
 const { Option } = Select;
 
@@ -15,7 +15,7 @@ interface DoctorFormProps {
 const DoctorForm: React.FC<DoctorFormProps> = ({ onSuccess, onCancel }) => {
     const [form] = Form.useForm();
     const [specialties, setSpecialties] = useState<any[]>([]);
-
+    const [createDoctor, { isLoading }] = useCreateDoctorMutation();
     useEffect(() => {
         const staticSpecialties = [
             { id: '6DD8D2A2-D6CA-4DCF-80E2-070CD920E8E2', title: 'Nội tổng quát' },
@@ -65,17 +65,19 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ onSuccess, onCancel }) => {
             // for (const pair of formData.entries()) {
             //     console.log(`[FormData] ${pair[0]}:`, pair[1]);
             // }
-            await axios.post('https://localhost:7115/api/Admin/doctor', formData);
+            await createDoctor(formData).unwrap();
 
             message.success('Tạo bác sĩ thành công!');
             form.resetFields();
             onSuccess();
         } catch (error: any) {
-            if (error.response) {
-                console.error('Lỗi server trả về:', error.response.status, error.response.data);
-                message.error(`Tạo bác sĩ thất bại: ${error.response.data?.message || 'Lỗi không xác định'}`);
+            console.error('Lỗi khi tạo bác sĩ:', error);
+
+            if (error?.data?.message) {
+                message.error(`Tạo bác sĩ thất bại: ${error.data.message}`);
+            } else if (typeof error === 'string') {
+                message.error(`Tạo bác sĩ thất bại: ${error}`);
             } else {
-                console.error('Lỗi khi gửi request:', error);
                 message.error('Tạo bác sĩ thất bại!');
             }
         }
@@ -146,7 +148,7 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ onSuccess, onCancel }) => {
             </Row>
 
             <Form.Item className="text-center mt-4">
-                <Button type="primary" htmlType="submit" className="mr-2">
+                <Button type="primary" htmlType="submit" className="mr-2" loading={isLoading}>
                     Tạo bác sĩ
                 </Button>
                 <Button onClick={onCancel}>Hủy</Button>

@@ -6,12 +6,15 @@ import type { ColumnsType } from 'antd/es/table';
 import axios from 'axios';
 import { Plus, Trash2, Pencil } from 'lucide-react';
 import MedicineForm from '@/components/admin/medicalForm'
+import { useGetMedicinesQuery } from '@/api';
+import { MedicineDto } from '@/types/doctor';
+
 const MedicalTable = () => {
-    const [medicines, setMedicines] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
+    const { data: medicineRes, isLoading, refetch } = useGetMedicinesQuery();
+    const medicines = medicineRes?.data || []
 
-
-    const columns: ColumnsType<any> = [
+    const columns: ColumnsType<MedicineDto> = [
         {
             title: 'STT',
             key: 'stt',
@@ -72,19 +75,6 @@ const MedicalTable = () => {
         },
     ];
 
-    const fetchMedicines = async () => {
-        try {
-            const response = await axios.get('https://localhost:7115/api/Doctor/medicines');
-            setMedicines(response.data.data);
-        } catch (error) {
-            console.error("Lỗi khi lấy dữ liệu thuốc:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchMedicines();
-    }, []);
-
     return (
         <>
             <div className="flex justify-between items-center mb-5">
@@ -101,6 +91,7 @@ const MedicalTable = () => {
                 bordered
                 dataSource={medicines}
                 columns={columns}
+                loading={isLoading}
                 scroll={{ x: 1000 }}
                 rowKey="id"
                 className="[&_.ant-table-cell]:!border-black 
@@ -120,7 +111,7 @@ const MedicalTable = () => {
                 <MedicineForm
                     onSuccess={() => {
                         setShowForm(false);
-                        fetchMedicines();
+                        refetch();
                     }}
                     onCancel={() => setShowForm(false)}
                 />

@@ -1,13 +1,16 @@
-import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError} from "@reduxjs/toolkit/query/react";
-import {RootState} from "@/store";
-import {TokenResponse} from "@/types/auth";
-import type {Response} from "@/types"
+import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import { RootState } from "@/store";
+import { TokenResponse } from "@/types/auth";
+import type { Response } from "@/types"
 import { setCredentials, logout } from "@/store/slices/authSlice";
-import {Specialty, SpecialtyWithDoctor} from "@/types/specialty";
-import {GetTimeSlotsParams, TimeSlot} from "@/types/slot";
-import {MomoRequest, PaymentData, PaymentStatusResponse} from "@/types/payment";
-import {Appointment, CreateAppointmentRequest} from "@/types/appointment";
-import {Doctor} from "@/types/user";
+import { Specialty, SpecialtyWithDoctor } from "@/types/specialty";
+import { GetTimeSlotsParams, TimeSlot } from "@/types/slot";
+import { MomoRequest, PaymentData, PaymentStatusResponse } from "@/types/payment";
+import { Appointment, CreateAppointmentRequest } from "@/types/appointment";
+import { Doctor } from "@/types/user";
+import { Hospital } from "@/types/hospital"
+
+
 import {
     CreatePrescriptionRequest,
     CreatePrescriptionResponse,
@@ -85,7 +88,7 @@ export const api = createApi({
             query: () => ({ url: "Specialty", method: "GET" }),
         }),
         getSpecialtiesWithDoctor: builder.query<Response<SpecialtyWithDoctor[]>, void>({
-            query: () => ({url: "Specialty/with-doctors", method: "GET"})
+            query: () => ({ url: "Specialty/with-doctors", method: "GET" })
         }),
         getTimeSlots: builder.query<Response<TimeSlot[]>, GetTimeSlotsParams>({
             query: ({ doctorId, date }) => ({
@@ -149,7 +152,7 @@ export const api = createApi({
                 method: "GET",
             })
         }),
-        updateAppointmentStatus :builder.mutation<
+        updateAppointmentStatus: builder.mutation<
             Response<Appointment>,
             {
                 appointmentId: string;
@@ -214,6 +217,34 @@ export const api = createApi({
                 method: "GET",
             })
         }),
+        createDoctor: builder.mutation<Response<string>, FormData>({
+            query: (formData) => ({
+                url: "Admin/doctor",
+                method: "POST",
+                body: formData,
+            }),
+        }),
+        getHospitals: builder.query<Response<Hospital[]>, void>({
+            query: () => ({
+                url: 'Hospital',
+                method: 'GET',
+            }),
+        }),
+        createHospital: builder.mutation<Response<any>, FormData>({
+            query: (formData) => ({
+                url: 'Admin/hospital',
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+        createMedicine: builder.mutation<Response<string>, any>({
+            query: (medicine) => ({
+                url: 'Admin/medicine',
+                method: 'POST',
+                body: medicine,
+            }),
+        }),
+
     }),
 });
 
@@ -235,4 +266,8 @@ export const {
     useCreatePrescriptionMutation,
     useGetMedicinesQuery,
     useGetDoctorProfileQuery,
+    useCreateDoctorMutation,
+    useGetHospitalsQuery,
+    useCreateHospitalMutation,
+    useCreateMedicineMutation,
 } = api;

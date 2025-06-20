@@ -1,30 +1,22 @@
 'use client';
 
 import { Button, Modal, Table } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
-import axios from 'axios';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import HospitalForm from '@/components/admin/hospitalForm';
+import { useGetHospitalsQuery } from '@/api';
+import { Hospital } from "@/types/hospital"
 
 const HospitalTable = () => {
-    const [hospitals, setHospitals] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
 
-    const fetchHospitals = async () => {
-        try {
-            const response = await axios.get('https://localhost:7115/api/Hospital');
-            setHospitals(response.data.data);
-        } catch (error) {
-            console.error('Lỗi khi lấy danh sách bệnh viện:', error);
-        }
-    };
+    const { data: hospitalRes, isLoading, refetch } = useGetHospitalsQuery();
+    const hospitals = hospitalRes?.data || [];
 
-    useEffect(() => {
-        fetchHospitals();
-    }, []);
 
-    const columns: ColumnsType<any> = [
+
+    const columns: ColumnsType<Hospital> = [
         {
             title: 'STT',
             key: 'stt',
@@ -104,6 +96,7 @@ const HospitalTable = () => {
                 bordered
                 dataSource={hospitals}
                 columns={columns}
+                loading={isLoading}
                 rowKey="id"
                 scroll={{ x: 1000 }}
                 className="[&_.ant-table-cell]:!border-black 
@@ -126,7 +119,7 @@ const HospitalTable = () => {
                 <HospitalForm
                     onSuccess={() => {
                         setShowForm(false);
-                        fetchHospitals();
+                        refetch();
                     }}
                     onCancel={() => setShowForm(false)}
                 />
