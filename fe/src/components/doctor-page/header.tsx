@@ -18,6 +18,7 @@ import {useDispatch} from "react-redux";
 import {AppDispatch} from "@/store";
 import {logout} from "@/store/slices/authSlice";
 import {DoctorProfile} from "@/types/doctor";
+import {useLogoutMutation} from "@/api";
 
 interface DoctorHeaderProps {
     doctorInfo: DoctorProfile
@@ -27,9 +28,14 @@ export default function Header({ doctorInfo }: DoctorHeaderProps) {
     const [notifications] = useState(3)
     const dispatch = useDispatch<AppDispatch>();
 
-    const handleLogout = () => {
+    const [logoutMutation] = useLogoutMutation()
+
+    const handleLogout = async () => {
+        try {
+            await logoutMutation().unwrap();
+        } catch {}
         dispatch(logout());
-        window.location.href = "/login"
+        window.location.href = "/login";
     }
 
     const doctorName = doctorInfo?.name || "BS. Nguyễn Văn An"
