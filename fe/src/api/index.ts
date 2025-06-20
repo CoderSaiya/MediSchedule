@@ -23,13 +23,9 @@ console.log(BASE_URL);
 
 const baseQuery = fetchBaseQuery({
     baseUrl: `${BASE_URL}/api`,
-    prepareHeaders: (headers, { getState }) => {
-        const token = (getState() as RootState).auth.accessToken;
-
-        if (token) {
-            headers.set("authorization", `Bearer ${token}`);
-        }
-
+    credentials: 'include',
+    prepareHeaders: (headers) => {
+        headers.set('Content-Type', 'application/json');
         return headers;
     },
 });
@@ -81,6 +77,12 @@ export const api = createApi({
                     // ignore error
                 }
             },
+        }),
+        logout: builder.mutation<Response<string>, void>({
+            query: () => ({
+                url: "Auth/logout",
+                method: "POST",
+            }),
         }),
         getSpecialties: builder.query<Response<Specialty[]>, void>({
             query: () => ({ url: "Specialty", method: "GET" }),
@@ -227,6 +229,7 @@ export const api = createApi({
 
 export const {
     useLoginMutation,
+    useLogoutMutation,
     useGetSpecialtiesQuery,
     useGetSpecialtiesWithDoctorQuery,
     useGetTimeSlotsQuery,
