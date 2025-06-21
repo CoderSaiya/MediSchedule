@@ -94,6 +94,8 @@ var app = builder.Build();
 
 app.UseRouting();
 
+app.UseCors();
+
 app.UseAuthentication();
 
 app.UseMiddleware<RoleMappingMiddleware>();
@@ -101,8 +103,6 @@ app.UseMiddleware<RoleMappingMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors();
 
 app.MapHub<NotificationHub>("/notificationhub");
 app.MapHub<ChatHub>("/chathub");
