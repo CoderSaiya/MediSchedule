@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Form, Input, Row, Col, Button, message } from 'antd';
-import axios from 'axios';
+import { useCreateMedicineMutation } from '@/api';
 
 interface MedicineFormProps {
     onSuccess: () => void;
@@ -11,19 +11,17 @@ interface MedicineFormProps {
 
 const MedicineForm: React.FC<MedicineFormProps> = ({ onSuccess, onCancel }) => {
     const [form] = Form.useForm();
+    const [createMedicine, { isLoading }] = useCreateMedicineMutation();
 
     const onFinish = async (values: any) => {
         try {
-            await axios.post('https://localhost:7115/api/Admin/medicine', values);
+            await createMedicine(values).unwrap();
             message.success('Thêm thuốc thành công!');
             form.resetFields();
             onSuccess();
         } catch (error: any) {
-            if (error.response) {
-                message.error(`Lỗi: ${error.response.data?.message || 'Không xác định'}`);
-            } else {
-                message.error('Thêm thuốc thất bại!');
-            }
+            console.error('Lỗi khi thêm thuốc:', error);
+            message.error(`Thêm thuốc thất bại: ${error?.data?.message || 'Không xác định'}`);
         }
     };
 
@@ -58,7 +56,7 @@ const MedicineForm: React.FC<MedicineFormProps> = ({ onSuccess, onCancel }) => {
             </Row>
 
             <Form.Item className="text-center mt-4">
-                <Button type="primary" htmlType="submit" className="mr-2">
+                <Button type="primary" htmlType="submit" className="mr-2" loading={isLoading}>
                     Thêm thuốc
                 </Button>
                 <Button onClick={onCancel}>Hủy</Button>

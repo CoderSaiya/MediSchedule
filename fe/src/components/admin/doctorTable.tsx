@@ -2,17 +2,19 @@
 import { Button, Table, Rate } from 'antd';
 import { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
-import axios from 'axios';
 import DoctorForm from '@/components/admin/doctorForm';
 import { Modal } from 'antd';
-import { Plus, Pencil, Trash2, Star } from 'lucide-react';
-
-
+import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { useGetDoctorsQuery } from '@/api';
+import { Doctor } from "@/types/user";
+import DoctorAppointments from '@/components/admin/doctorAppointments';
 const DoctorTable = () => {
-    const [doctors, setDoctors] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
 
-    const columns: ColumnsType<any> = [
+    const { data: doctorRes, isLoading, refetch } = useGetDoctorsQuery();
+    const doctors = doctorRes?.data || [];
+
+    const columns: ColumnsType<Doctor> = [
         {
             title: 'STT',
             key: 'stt',
@@ -64,7 +66,7 @@ const DoctorTable = () => {
             dataIndex: 'specialty',
             key: 'specialty',
             align: 'center',
-            width: '15%',
+            width: '10%',
         },
         {
             title: 'Đánh giá',
@@ -81,43 +83,24 @@ const DoctorTable = () => {
             dataIndex: 'reviews',
             key: 'reviews',
             align: 'center',
-            width: '15%',
+            width: '10%',
             render: (reviews: number) => (
-                <span>{reviews || 0} nhận xét</span>
+                <span>{reviews || 0} </span>
             ),
         },
 
         {
             title: 'Lịch làm việc',
             key: 'appointments',
-            render: (text: any) => (
-                <div>
-                    {text.appointments.length > 0 ? (
-                        <div className="space-y-2 ">
-                            {text.appointments.map((appointment: any, index: number) => {
-                                const startTime = appointment.slot?.startTime || "Chưa có giờ bắt đầu";
-                                const endTime = appointment.slot?.endTime || "Chưa có giờ kết thúc";
-                                return (
-                                    <div key={index} className="p-2 border rounded-lg bg-teal-400">
-                                        <div>{`Ngày: ${appointment.appointmentDate}`}</div>
-                                        <div>{`Giờ: ${startTime} - ${endTime}`}</div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <span>Chưa có lịch làm việc</span>
-                    )}
-                </div>
-            ),
             align: 'center',
-            width: '20%',
+            width: '25%',
+            render: (_, record) => <DoctorAppointments doctorId={record.id} />,
         },
         {
             title: 'Tính năng',
             key: 'actions',
             align: 'center',
-            width: '25%',
+            width: '10%',
             render: () => (
                 <div className="flex justify-center gap-2">
                     <Button
@@ -136,30 +119,6 @@ const DoctorTable = () => {
         },
     ];
 
-    const fetchDoctors = async () => {
-        try {
-            const response = await axios.get('https://localhost:7115/api/Public/doctors');
-            const doctorsWithAppointments = await Promise.all(response.data.data.map(async (doctor: any) => {
-                const appointmentResponse = await axios.get(
-                    `https://localhost:7115/api/Doctor/appointments/${doctor.id}`
-                );
-                return {
-                    ...doctor,
-                    appointments: appointmentResponse.data.data,
-                };
-            }));
-
-
-            setDoctors(doctorsWithAppointments);
-        } catch (error) {
-            console.error("Lỗi khi lấy dữ liệu bác sĩ:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchDoctors();
-    }, []);
-
     return (
         <>
             <div className="flex justify-between items-center mb-5">
@@ -176,6 +135,7 @@ const DoctorTable = () => {
                 bordered
                 dataSource={doctors}
                 columns={columns}
+                loading={isLoading}
                 scroll={{ x: 1000 }}
                 rowKey="id"
                 className="[&_.ant-table-cell]:!border-black 
@@ -198,7 +158,7 @@ const DoctorTable = () => {
                 <DoctorForm
                     onSuccess={() => {
                         setShowForm(false);
-                        fetchDoctors();
+                        refetch();
                     }}
                     onCancel={() => setShowForm(false)}
                 />

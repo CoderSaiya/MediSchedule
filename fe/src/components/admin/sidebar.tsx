@@ -56,7 +56,7 @@ const AdminSideBar = () => {
         },
         {
             key: "notifications",
-            label: <Link href={"/dashboard/notifications"}>Thông báo</Link>,
+            label: <Link href={"/dashboard/notification"}>Thông báo</Link>,
             icon: <Bell size={18} />,
         },
 

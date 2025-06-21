@@ -3,7 +3,7 @@
 import React from 'react';
 import { Form, Input, Row, Col, Button, Upload, message } from 'antd';
 import { ImageUp } from 'lucide-react';
-import axios from 'axios';
+import { useCreateHospitalMutation } from '@/api';
 
 interface HospitalFormProps {
     onSuccess: () => void;
@@ -12,6 +12,7 @@ interface HospitalFormProps {
 
 const HospitalForm: React.FC<HospitalFormProps> = ({ onSuccess, onCancel }) => {
     const [form] = Form.useForm();
+    const [createHospital, { isLoading }] = useCreateHospitalMutation();
 
     const onFinish = async (values: any) => {
         try {
@@ -30,14 +31,18 @@ const HospitalForm: React.FC<HospitalFormProps> = ({ onSuccess, onCancel }) => {
                 formData.append('File', fileObj);
             }
 
-            await axios.post('https://localhost:7115/api/Admin/hospital', formData);
+            await createHospital(formData).unwrap();
 
             message.success('Thêm bệnh viện thành công!');
             form.resetFields();
             onSuccess();
         } catch (error: any) {
             console.error('Lỗi khi gửi request:', error);
-            message.error('Thêm bệnh viện thất bại!');
+            const errorMsg =
+                error?.data?.message ||
+                error?.error ||
+                'Thêm bệnh viện thất bại!';
+            message.error(errorMsg);
         }
     };
 
@@ -99,7 +104,7 @@ const HospitalForm: React.FC<HospitalFormProps> = ({ onSuccess, onCancel }) => {
 
 
             <Form.Item className="text-center mt-4">
-                <Button type="primary" htmlType="submit" className="mr-2">
+                <Button type="primary" htmlType="submit" className="mr-2" loading={isLoading}>
                     Thêm bệnh viện
                 </Button>
                 <Button onClick={onCancel}>Hủy</Button>
