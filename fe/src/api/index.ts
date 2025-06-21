@@ -244,6 +244,13 @@ export const api = createApi({
                 body: medicine,
             }),
         }),
+        getAppointmentsByDoctor: builder.query<Response<Appointment[]>, string>({
+            query: (doctorId) => ({
+                url: `Doctor/appointments/${doctorId}`,
+                method: "GET",
+            }),
+        }),
+
 
     }),
 });
@@ -270,4 +277,5 @@ export const {
     useGetHospitalsQuery,
     useCreateHospitalMutation,
     useCreateMedicineMutation,
+    useGetAppointmentsByDoctorQuery,
 } = api;

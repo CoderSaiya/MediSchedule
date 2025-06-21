@@ -7,7 +7,7 @@ import { Modal } from 'antd';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { useGetDoctorsQuery } from '@/api';
 import { Doctor } from "@/types/user";
-
+import DoctorAppointments from '@/components/admin/doctorAppointments';
 const DoctorTable = () => {
     const [showForm, setShowForm] = useState(false);
 
@@ -66,7 +66,7 @@ const DoctorTable = () => {
             dataIndex: 'specialty',
             key: 'specialty',
             align: 'center',
-            width: '15%',
+            width: '10%',
         },
         {
             title: 'Đánh giá',
@@ -83,43 +83,24 @@ const DoctorTable = () => {
             dataIndex: 'reviews',
             key: 'reviews',
             align: 'center',
-            width: '15%',
+            width: '10%',
             render: (reviews: number) => (
-                <span>{reviews || 0} nhận xét</span>
+                <span>{reviews || 0} </span>
             ),
         },
 
-        // {
-        //     title: 'Lịch làm việc',
-        //     key: 'appointments',
-        //     render: (text: any) => (
-        //         <div>
-        //             {text.appointments.length > 0 ? (
-        //                 <div className="space-y-2 ">
-        //                     {text.appointments.map((appointment: any, index: number) => {
-        //                         const startTime = appointment.slot?.startTime || "Chưa có giờ bắt đầu";
-        //                         const endTime = appointment.slot?.endTime || "Chưa có giờ kết thúc";
-        //                         return (
-        //                             <div key={index} className="p-2 border rounded-lg bg-teal-400">
-        //                                 <div>{`Ngày: ${appointment.appointmentDate}`}</div>
-        //                                 <div>{`Giờ: ${startTime} - ${endTime}`}</div>
-        //                             </div>
-        //                         );
-        //                     })}
-        //                 </div>
-        //             ) : (
-        //                 <span>Chưa có lịch làm việc</span>
-        //             )}
-        //         </div>
-        //     ),
-        //     align: 'center',
-        //     width: '20%',
-        // },
+        {
+            title: 'Lịch làm việc',
+            key: 'appointments',
+            align: 'center',
+            width: '25%',
+            render: (_, record) => <DoctorAppointments doctorId={record.id} />,
+        },
         {
             title: 'Tính năng',
             key: 'actions',
             align: 'center',
-            width: '25%',
+            width: '10%',
             render: () => (
                 <div className="flex justify-center gap-2">
                     <Button
