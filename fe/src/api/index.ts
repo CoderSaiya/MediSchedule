@@ -169,6 +169,13 @@ export const api = createApi({
                 }
             },
         }),
+        createDoctor: builder.mutation<Response<string>, FormData>({
+            query: (formData) => ({
+                url: "Admin/doctor",
+                method: "POST",
+                body: formData,
+            }),
+        }),
         createPrescription: builder.mutation<Response<CreatePrescriptionResponse>, CreatePrescriptionRequest>({
             query: ({ appointmentId, notes, file, items }) => {
                 const formData = new FormData()
@@ -223,6 +230,26 @@ export const api = createApi({
                 method: "GET",
             })
         }),
+        createHospital: builder.mutation<Response<any>, FormData>({
+            query: (formData) => ({
+                url: 'Admin/hospital',
+                method: 'POST',
+                body: formData,
+            }),
+        }),
+        createMedicine: builder.mutation<Response<string>, any>({
+            query: (medicine) => ({
+                url: 'Admin/medicine',
+                method: 'POST',
+                body: medicine,
+            }),
+        }),
+        getAppointmentsByDoctor: builder.query<Response<Appointment[]>, string>({
+            query: (doctorId) => ({
+                url: `Doctor/appointments/${doctorId}`,
+                method: "GET",
+            }),
+        })
     }),
 });
 
@@ -242,8 +269,12 @@ export const {
     useGetAppointmentByDoctorQuery,
     useGetTodayAppointmentsQuery,
     useUpdateAppointmentStatusMutation,
+    useCreateHospitalMutation,
     useCreatePrescriptionMutation,
     useGetMedicinesQuery,
     useGetDoctorProfileQuery,
-    useGetHospitalsQuery
+    useGetHospitalsQuery,
+    useCreateDoctorMutation,
+    useCreateMedicineMutation,
+    useGetAppointmentsByDoctorQuery
 } = api;
