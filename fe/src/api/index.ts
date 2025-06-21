@@ -1,16 +1,13 @@
-import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
-import { RootState } from "@/store";
-import { TokenResponse } from "@/types/auth";
-import type { Response } from "@/types"
+import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError} from "@reduxjs/toolkit/query/react";
+import {RootState} from "@/store";
+import {TokenResponse} from "@/types/auth";
+import type {Response} from "@/types"
 import { setCredentials, logout } from "@/store/slices/authSlice";
-import { Specialty, SpecialtyWithDoctor } from "@/types/specialty";
-import { GetTimeSlotsParams, TimeSlot } from "@/types/slot";
-import { MomoRequest, PaymentData, PaymentStatusResponse } from "@/types/payment";
-import { Appointment, CreateAppointmentRequest } from "@/types/appointment";
-import { Doctor } from "@/types/user";
-import { Hospital } from "@/types/hospital"
-
-
+import {Specialty, SpecialtyWithDoctor} from "@/types/specialty";
+import {GetTimeSlotsParams, TimeSlot} from "@/types/slot";
+import {MomoRequest, PaymentData, PaymentStatusResponse} from "@/types/payment";
+import {Appointment, CreateAppointmentRequest} from "@/types/appointment";
+import {Doctor} from "@/types/user";
 import {
     CreatePrescriptionRequest,
     CreatePrescriptionResponse,
@@ -18,6 +15,7 @@ import {
     DoctorProfile,
     MedicineDto
 } from "@/types/doctor";
+import {Hospital} from "@/types/hospital";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -25,13 +23,9 @@ console.log(BASE_URL);
 
 const baseQuery = fetchBaseQuery({
     baseUrl: `${BASE_URL}/api`,
-    prepareHeaders: (headers, { getState }) => {
-        const token = (getState() as RootState).auth.accessToken;
-
-        if (token) {
-            headers.set("authorization", `Bearer ${token}`);
-        }
-
+    credentials: 'include',
+    prepareHeaders: (headers) => {
+        headers.set('Content-Type', 'application/json');
         return headers;
     },
 });
@@ -84,11 +78,17 @@ export const api = createApi({
                 }
             },
         }),
+        logout: builder.mutation<Response<string>, void>({
+            query: () => ({
+                url: "Auth/logout",
+                method: "POST",
+            }),
+        }),
         getSpecialties: builder.query<Response<Specialty[]>, void>({
             query: () => ({ url: "Specialty", method: "GET" }),
         }),
-        getSpecialtiesWithDoctor: builder.query<Response<SpecialtyWithDoctor[]>, void>({
-            query: () => ({ url: "Specialty/with-doctors", method: "GET" })
+        getSpecialtiesWithDoctor: builder.query<Response<SpecialtyWithDoctor[]>, {hospitalId: string}>({
+            query: ({hospitalId}) => ({url: `Specialty/${hospitalId}/with-doctors`, method: "GET"})
         }),
         getTimeSlots: builder.query<Response<TimeSlot[]>, GetTimeSlotsParams>({
             query: ({ doctorId, date }) => ({
@@ -152,8 +152,8 @@ export const api = createApi({
                 method: "GET",
             })
         }),
-        updateAppointmentStatus: builder.mutation<
-            Response<Appointment>,
+        updateAppointmentStatus :builder.mutation<
+            Response<string>,
             {
                 appointmentId: string;
                 status: "confirmed" | "completed";
@@ -163,7 +163,7 @@ export const api = createApi({
                 const formData = new FormData()
                 formData.append('status', status)
                 return {
-                    url: `Doctor/update-appointment/${appointmentId}`,
+                    url: `Doctor/appointment/status/${appointmentId}`,
                     method: "POST",
                     body: formData,
                 }
@@ -217,47 +217,19 @@ export const api = createApi({
                 method: "GET",
             })
         }),
-        createDoctor: builder.mutation<Response<string>, FormData>({
-            query: (formData) => ({
-                url: "Admin/doctor",
-                method: "POST",
-                body: formData,
-            }),
-        }),
         getHospitals: builder.query<Response<Hospital[]>, void>({
             query: () => ({
-                url: 'Hospital',
-                method: 'GET',
-            }),
-        }),
-        createHospital: builder.mutation<Response<any>, FormData>({
-            query: (formData) => ({
-                url: 'Admin/hospital',
-                method: 'POST',
-                body: formData,
-            }),
-        }),
-        createMedicine: builder.mutation<Response<string>, any>({
-            query: (medicine) => ({
-                url: 'Admin/medicine',
-                method: 'POST',
-                body: medicine,
-            }),
-        }),
-        getAppointmentsByDoctor: builder.query<Response<Appointment[]>, string>({
-            query: (doctorId) => ({
-                url: `Doctor/appointments/${doctorId}`,
+                url: `Hospital`,
                 method: "GET",
-            }),
+            })
         }),
-
-
     }),
 });
 
 
 export const {
     useLoginMutation,
+    useLogoutMutation,
     useGetSpecialtiesQuery,
     useGetSpecialtiesWithDoctorQuery,
     useGetTimeSlotsQuery,
@@ -273,9 +245,5 @@ export const {
     useCreatePrescriptionMutation,
     useGetMedicinesQuery,
     useGetDoctorProfileQuery,
-    useCreateDoctorMutation,
-    useGetHospitalsQuery,
-    useCreateHospitalMutation,
-    useCreateMedicineMutation,
-    useGetAppointmentsByDoctorQuery,
+    useGetHospitalsQuery
 } = api;

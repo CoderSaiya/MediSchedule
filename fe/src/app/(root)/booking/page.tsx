@@ -12,8 +12,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, Clock, CreditCard, Loader2, AlertCircle, DollarSign } from "lucide-react"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
-import { useGetSpecialtiesWithDoctorQuery, useGetTimeSlotsQuery } from "@/api"
+import {useGetHospitalsQuery, useGetSpecialtiesWithDoctorQuery, useGetTimeSlotsQuery} from "@/api"
 import {formatVND} from "@/lib/formatAmout";
+import {Hospital} from "@/types/hospital";
+import {HospitalSelector} from "@/components/booking/hospital-selector";
 
 interface TimeSlot {
     id: string
@@ -26,6 +28,7 @@ export default function BookingPage() {
     const [date, setDate] = useState<Date>()
     const [selectedTime, setSelectedTime] = useState("")
     const [selectedSlotId, setSelectedSlotId] = useState("")
+    const [selectedHospital, setSelectedHospital] = useState<Hospital>()
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState({
         specialty: "",
@@ -45,12 +48,21 @@ export default function BookingPage() {
     }, [])
 
     const {
+        data: hospitalsResponse
+    } = useGetHospitalsQuery(undefined, {
+        skip: !mounted,
+    })
+
+    const {
         data: specialtiesResponse,
         isLoading: specialtiesLoading,
         error: specialtiesError,
-    } = useGetSpecialtiesWithDoctorQuery(undefined, {
-        skip: !mounted,
-    })
+    } = useGetSpecialtiesWithDoctorQuery(
+        { hospitalId: selectedHospital?.id as string},
+        {
+            skip: !mounted || !selectedHospital?.id,
+        }
+    )
 
     // Improved time slots fetching logic
     const shouldFetchTimeSlots = mounted && !!formData.doctorId && !!date
@@ -81,6 +93,7 @@ export default function BookingPage() {
 
     const specialties = specialtiesResponse?.data || []
     const timeSlots = timeSlotsResponse?.data || []
+    const hospitals = hospitalsResponse?.data || []
 
     const getSelectedSpecialtyPrice = () => {
         if (!formData.specialty) return 0
@@ -96,6 +109,20 @@ export default function BookingPage() {
         if (!formData.specialty) return []
         const selectedSpecialty = specialties.find((spec) => spec.name === formData.specialty)
         return selectedSpecialty?.doctorNames || []
+    }
+
+    const handleHospitalSelect = (hospital: Hospital) => {
+        setSelectedHospital(hospital)
+        setFormData((prev) => ({
+            ...prev,
+            hospitalId: hospital.id,
+            hospitalName: hospital.name,
+            specialty: "",
+            doctor: "",
+            doctorId: "",
+        }))
+        setSelectedTime("")
+        setSelectedSlotId("")
     }
 
     const handleInputChange = (field: string, value: string) => {
@@ -140,7 +167,7 @@ export default function BookingPage() {
     }
 
     const handleNext = () => {
-        if (step < 3) setStep(step + 1)
+        if (step < 4) setStep(step + 1)
     }
 
     const handlePrevious = () => {
@@ -216,18 +243,18 @@ export default function BookingPage() {
                 {/* Progress Steps */}
                 <div className="flex items-center justify-center mb-8">
                     <div className="flex items-center space-x-4">
-                        {[1, 2, 3].map((stepNumber) => (
+                        {[1, 2, 3, 4].map((stepNumber) => (
                             <div key={stepNumber} className="flex items-center">
                                 <div
                                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-300 ${
-                                        step >= stepNumber ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+                                        step >= stepNumber ? "bg-teal-600 text-white" : "bg-gray-200 text-gray-600"
                                     }`}
                                 >
                                     {stepNumber}
                                 </div>
-                                {stepNumber < 3 && (
+                                {stepNumber < 4 && (
                                     <div
-                                        className={`w-16 h-1 mx-2 transition-colors duration-300 ${step > stepNumber ? "bg-blue-600" : "bg-gray-200"}`}
+                                        className={`w-16 h-1 mx-2 transition-colors duration-300 ${step > stepNumber ? "bg-teal-600" : "bg-gray-200"}`}
                                     />
                                 )}
                             </div>
@@ -238,18 +265,30 @@ export default function BookingPage() {
                 <Card className="shadow-lg">
                     <CardHeader>
                         <CardTitle>
-                            {step === 1 && "Chọn chuyên khoa và bác sĩ"}
-                            {step === 2 && "Chọn thời gian khám"}
-                            {step === 3 && "Thông tin bệnh nhân"}
+                            {step === 1 && "Chọn bệnh viện"}
+                            {step === 2 && "Chọn chuyên khoa và bác sĩ"}
+                            {step === 3 && "Chọn thời gian khám"}
+                            {step === 4 && "Thông tin bệnh nhân"}
                         </CardTitle>
                         <CardDescription>
-                            {step === 1 && "Lựa chọn chuyên khoa và bác sĩ phù hợp với nhu cầu của bạn"}
-                            {step === 2 && "Chọn ngày và giờ khám thuận tiện"}
-                            {step === 3 && "Điền thông tin cá nhân và triệu chứng"}
+                            {step === 1 && "Lựa chọn bệnh viện phù hợp với nhu cầu của bạn"}
+                            {step === 2 && "Lựa chọn chuyên khoa và bác sĩ phù hợp với nhu cầu của bạn"}
+                            {step === 3 && "Chọn ngày và giờ khám thuận tiện"}
+                            {step === 4 && "Điền thông tin cá nhân và triệu chứng"}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {step === 1 && (
+                            <div className="opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]">
+                                <HospitalSelector
+                                    hospitals={hospitals}
+                                    selectedHospital={selectedHospital}
+                                    onHospitalSelect={handleHospitalSelect}
+                                />
+                            </div>
+                        )}
+
+                        {step === 2 && (
                             <div className="space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]">
                                 <div className="space-y-2">
                                     <Label htmlFor="specialty">Chuyên khoa</Label>
@@ -262,7 +301,7 @@ export default function BookingPage() {
                                                 <SelectItem key={specialty.name} value={specialty.name}>
                                                     <div className="flex items-center justify-between w-full">
                                                         <span>{specialty.name}</span>
-                                                        <span className="ml-4 text-sm font-medium text-blue-600">
+                                                        <span className="ml-4 text-sm font-medium text-teal-600">
                                                             {formatVND(specialty.amount)}
                                                           </span>
                                                     </div>
@@ -273,13 +312,13 @@ export default function BookingPage() {
                                 </div>
 
                                 {formData.specialty && (
-                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 opacity-0 animate-[fadeInUp_0.5s_ease-out_0.1s_forwards]">
+                                    <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 opacity-0 animate-[fadeInUp_0.5s_ease-out_0.1s_forwards]">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-2">
-                                                <DollarSign className="h-5 w-5 text-blue-600" />
-                                                <span className="text-blue-700 font-medium">Phí khám {formData.specialty}:</span>
+                                                <DollarSign className="h-5 w-5 text-teal-600" />
+                                                <span className="text-teal-700 font-medium">Phí khám {formData.specialty}:</span>
                                             </div>
-                                            <span className="text-xl font-bold text-blue-600">
+                                            <span className="text-xl font-bold text-teal-600">
                                                 {formatVND(getSelectedSpecialtyPrice())}
                                             </span>
                                         </div>
@@ -306,7 +345,7 @@ export default function BookingPage() {
                             </div>
                         )}
 
-                        {step === 2 && (
+                        {step === 3 && (
                             <div className="space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]">
                                 <div className="space-y-2">
                                     <Label>Chọn ngày khám</Label>
@@ -343,10 +382,10 @@ export default function BookingPage() {
 
                                 {/* Show date selection reminder if doctor selected but no date */}
                                 {formData.doctorId && !date && (
-                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
                                         <div className="flex items-center">
-                                            <CalendarIcon className="h-5 w-5 text-blue-600 mr-2" />
-                                            <p className="text-blue-700 text-sm">Vui lòng chọn ngày khám để xem các khung giờ khả dụng.</p>
+                                            <CalendarIcon className="h-5 w-5 text-teal-600 mr-2" />
+                                            <p className="text-teal-700 text-sm">Vui lòng chọn ngày khám để xem các khung giờ khả dụng.</p>
                                         </div>
                                     </div>
                                 )}
@@ -451,7 +490,7 @@ export default function BookingPage() {
                             </div>
                         )}
 
-                        {step === 3 && (
+                        {step === 4 && (
                             <div className="space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]">
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
@@ -515,7 +554,7 @@ export default function BookingPage() {
                                 </div>
 
                                 {/* Booking Summary */}
-                                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 opacity-0 animate-[fadeInUp_0.5s_ease-out_0.3s_forwards]">
+                                <div className="bg-teal-50 p-4 rounded-lg border border-teal-200 opacity-0 animate-[fadeInUp_0.5s_ease-out_0.3s_forwards]">
                                     <h3 className="font-semibold text-gray-900 mb-3">Thông tin đặt lịch</h3>
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between">
@@ -545,7 +584,7 @@ export default function BookingPage() {
                                             </div>
                                             <div className="flex justify-between border-t pt-1 mt-1">
                                                 <span className="font-semibold">Tổng cộng:</span>
-                                                <span className="font-bold text-blue-600">{formatVND(getTotalAmount())}</span>
+                                                <span className="font-bold text-teal-600">{formatVND(getTotalAmount())}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -564,12 +603,13 @@ export default function BookingPage() {
                                 Quay lại
                             </Button>
 
-                            {step < 3 ? (
+                            {step < 4 ? (
                                 <Button
                                     onClick={handleNext}
                                     disabled={
-                                        (step === 1 && (!formData.specialty || !formData.doctor)) ||
-                                        (step === 2 && (!date || !selectedTime))
+                                        (step === 1 && !selectedHospital) ||
+                                        (step === 2 && (!formData.specialty || !formData.doctor)) ||
+                                        (step === 3 && (!date || !selectedTime))
                                     }
                                     className="transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
                                 >
@@ -579,7 +619,7 @@ export default function BookingPage() {
                                 <Button
                                     onClick={handleSubmit}
                                     disabled={!formData.fullName || !formData.phone || !formData.email}
-                                    className="bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                                    className="bg-teal-600 hover:bg-teal-700 transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
                                 >
                                     <CreditCard className="mr-2 h-4 w-4" />
                                     Thanh toán

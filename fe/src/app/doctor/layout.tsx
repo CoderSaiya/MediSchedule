@@ -1,79 +1,82 @@
-"use client"
+"use client";
 
-import type React from "react"
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Header from "@/components/doctor-page/header";
+import Sidebar from "@/components/doctor-page/sidebar";
+import { motion } from "framer-motion";
+import { useGetDoctorProfileQuery } from "@/api";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "@/store";
+import type { DoctorProfile } from "@/types/doctor";
+import { logout, setCredentials } from "@/store/slices/authSlice";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import Header from "@/components/doctor-page/header"
-import Sidebar from "@/components/doctor-page/sidebar"
-import { motion } from "framer-motion"
-import {useGetDoctorProfileQuery} from "@/api";
-import {useSelector} from "react-redux";
-import {RootState} from "@/store";
-import {DoctorProfile} from "@/types/doctor";
-
-interface DoctorLayoutProps {
-    children: React.ReactNode
+function CenterSpinner({ text }: { text: string }) {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4" />
+                <p className="text-gray-600">{text}</p>
+            </div>
+        </div>
+    );
 }
 
-export default function DoctorLayout({ children }: DoctorLayoutProps) {
-    const [mounted, setMounted] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
-    const router = useRouter()
+export default function DoctorLayout({ children }: { children: React.ReactNode }) {
+    const [mounted, setMounted] = useState(false);
+    const [checkingAuth, setCheckingAuth] = useState(true);
+    const router = useRouter();
+    const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     setMounted(true)
-    //
-    //     // Check authentication
-    //     const token = localStorage.getItem("authToken")
-    //     if (!token) {
-    //         router.push("/login")
-    //         return
-    //     }
-    //
-    //     try {
-    //         const userData = JSON.parse(atob(token))
-    //         if (userData.role !== "doctor") {
-    //             router.push("/login")
-    //             return
-    //         }
-    //
-    //         setDoctorInfo(userData)
-    //         setIsLoading(false)
-    //     } catch (error) {
-    //         console.error("Invalid token:", error)
-    //         router.push("/login")
-    //     }
-    // }, [router])
+    const { accessToken, role, userId } = useSelector(
+        (state: RootState) => state.auth
+    );
 
-    // if (!mounted || isLoading) {
-    //     return (
-    //         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-    //             <div className="text-center">
-    //                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-    //                 <p className="text-gray-600">Đang tải...</p>
-    //             </div>
-    //         </div>
-    //     )
-    // }
-    //
-    // if (!doctorInfo) {
-    //     return null
-    // }
+    const isDoctor = role?.toLowerCase() === "doctor";
+    const isAuthenticated = !!accessToken && isDoctor && !!userId;
 
-    const userId = useSelector((state: RootState) => state.auth.userId);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
-    const {data: profileResponse} = useGetDoctorProfileQuery(userId as string)
+    useEffect(() => {
+        if (!mounted) return;
 
-    const profileData = profileResponse?.data as DoctorProfile
+       const tokenLS = localStorage.getItem("accessToken");
+       if (!tokenLS) router.replace("/login");
+
+        if (!isAuthenticated) {
+            router.replace("/login");
+        } else {
+            setCheckingAuth(false);
+        }
+    }, [mounted, isAuthenticated, router]);
+
+    const { data: profileResp, isFetching, isError } = useGetDoctorProfileQuery(
+        userId as string,
+        { skip: !isAuthenticated }
+    );
+
+    useEffect(() => {
+        if (isError) {
+            dispatch(logout());
+            router.replace("/login");
+        }
+    }, [isError, dispatch, router]);
+
+    if (!mounted || checkingAuth) {
+        return <CenterSpinner text="Đang kiểm tra xác thực..." />;
+    }
+    if (isFetching) {
+        return <CenterSpinner text="Đang tải thông tin bác sĩ..." />;
+    }
+    const profileData = profileResp?.data as DoctorProfile;
 
     return (
         <div className="min-h-screen bg-gray-50">
             <Header doctorInfo={profileData} />
-
             <div className="flex">
                 <Sidebar doctorInfo={profileData} />
-
                 <main className="flex-1 ml-64">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -86,5 +89,5 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
                 </main>
             </div>
         </div>
-    )
+    );
 }

@@ -4,7 +4,12 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import {Providers} from "@/app/providers";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+    subsets: ["latin"],
+    display: "swap",
+    preload: true,
+    fallback: ["system-ui", "arial"],
+})
 
 export const metadata: Metadata = {
     title: "MediSchedule - Đặt lịch khám bệnh trực tuyến",
@@ -19,19 +24,35 @@ export default function RootLayout({
     return (
         <html lang="vi" suppressHydrationWarning>
         <head>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
             <meta charSet="UTF-8"/>
             <script
                 dangerouslySetInnerHTML={{
                     __html: `
-              // Prevent hydration mismatch from browser extensions
-              if (typeof window !== 'undefined') {
-                window.__NEXT_HYDRATION_CB = function() {
-                  // Remove any browser extension attributes that might cause hydration issues
-                  const elements = document.querySelectorAll('[bis_skin_checked]');
-                  elements.forEach(el => el.removeAttribute('bis_skin_checked'));
-                };
-              }
-            `,
+                      // Performance optimization
+                      if (typeof window !== 'undefined') {
+                        // Prevent hydration mismatch
+                        window.__NEXT_HYDRATION_CB = function() {
+                          const elements = document.querySelectorAll('[bis_skin_checked]');
+                          elements.forEach(el => el.removeAttribute('bis_skin_checked'));
+                        };
+                        
+                        // Preload critical routes
+                        if ('requestIdleCallback' in window) {
+                          requestIdleCallback(() => {
+                            const routes = ['/doctors', '/booking', '/services'];
+                            routes.forEach(route => {
+                              const link = document.createElement('link');
+                              link.rel = 'prefetch';
+                              link.href = route;
+                              document.head.appendChild(link);
+                            });
+                          });
+                        }
+                      }
+                    `,
                 }}
             />
         </head>
