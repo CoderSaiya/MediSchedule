@@ -24,8 +24,11 @@ console.log(BASE_URL);
 const baseQuery = fetchBaseQuery({
     baseUrl: `${BASE_URL}/api`,
     credentials: 'include',
-    prepareHeaders: (headers) => {
-        headers.set('Content-Type', 'application/json');
+    prepareHeaders: (headers, { getState }) => {
+        const token = (getState() as RootState).auth.accessToken;
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
         return headers;
     },
 });
