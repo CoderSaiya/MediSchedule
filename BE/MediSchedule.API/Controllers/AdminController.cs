@@ -72,6 +72,21 @@ public class AdminController(IMediator mediator, IHubContext<NotificationHub> hu
         }
     }
     
+    [HttpDelete("doctor")]
+    public async Task<IActionResult> DeleteDoctor([FromForm] DeleteDoctorCommand command)
+    {
+        try
+        {
+            await mediator.Send(command);
+            
+            return Ok(GlobalResponse<string>.Success("User created successfully."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
+        }
+    }
+    
     [HttpGet("users")]
     public async Task<IActionResult> GetUsers([FromQuery] UserFiler filter)
     {
@@ -99,6 +114,37 @@ public class AdminController(IMediator mediator, IHubContext<NotificationHub> hu
                 new CreateMedicineCommand(medicine));
 
             return Ok(GlobalResponse<string>.Success($"Medicine {request.Name} created successfully."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
+        }
+    }
+    
+    [HttpPut("medicine")]
+    public async Task<IActionResult> CreateMedicine([FromForm] UpdateMedicineCommand command)
+    {
+        try
+        {
+            await mediator.Send(command);
+
+            return Ok(GlobalResponse<string>.Success($"Medicine {command.Name} created successfully."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
+        }
+    }
+    
+    [HttpDelete("medicine/{id:guid}")]
+    public async Task<IActionResult> CreateMedicine([FromRoute] Guid id)
+    {
+        try
+        {
+            await mediator.Send(
+                new DeleteMedicineCommand(id));
+
+            return Ok(GlobalResponse<string>.Success($"Medicine {id} created successfully."));
         }
         catch (Exception ex)
         {
@@ -153,6 +199,36 @@ public class AdminController(IMediator mediator, IHubContext<NotificationHub> hu
                 data: addedDoctorIds,
                 message: $"{addedDoctorIds.Count()} doctors added successfully"
             ));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(e.Message, 500));
+        }
+    }
+    
+    [HttpPut("hospital")]
+    public async Task<IActionResult> UpdateHospital([FromForm] UpdateHospitalCommand command)
+    {
+        try
+        {
+            await mediator.Send(command);
+            
+            return Ok(GlobalResponse<string>.Success("Hospital created successfully."));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(e.Message, 500));
+        }
+    }
+    
+    [HttpDelete("hospital")]
+    public async Task<IActionResult> CreateHospital([FromForm] UpdateHospitalCommand request)
+    {
+        try
+        {
+            await mediator.Send(request);
+            
+            return Ok(GlobalResponse<string>.Success("Hospital created successfully."));
         }
         catch (Exception e)
         {
