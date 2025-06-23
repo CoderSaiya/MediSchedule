@@ -10,49 +10,51 @@ using MediSchedule.Application.UseCases.Users.Queries;
 using MediSchedule.Domain.Entities;
 using MediSchedule.Domain.Specifications;
 using MediSchedule.Domain.ValueObjects;
+using MediSchedule.Infrastructure.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BE.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AdminController(IMediator mediator) : Controller
+public class AdminController(IMediator mediator, IHubContext<NotificationHub> hubContext) : Controller
 {
-    [HttpPost("notification/{userId:guid}")]
-    public async Task<IActionResult> SendNotification([FromRoute] Guid userId, [FromBody] SendNotificationRequest request)
-    {
-        var lowerEnumNames = Enum
-            .GetNames(typeof(NotificationType))
-            .Select(name => name.ToLowerInvariant());
-
-        bool exists = lowerEnumNames.Contains(request.Type.ToLowerInvariant());
-        
-        if (exists)
-        {
-            Console.WriteLine($"Parsed thành công: {request.Type}");
-        }
-        else
-        {
-            return StatusCode(300, GlobalResponse<string>.Error($"{request.Type} không hợp lệ", 300));
-        }
-        
-        try
-        {
-            var notification = new Notification
-            {
-                UserId = userId,
-                
-            };
-            await mediator.Send(
-                new SendNotificationCommand(notification));
-            
-            return Ok(GlobalResponse<string>.Success("User created successfully."));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
-        }
-    }
+    // [HttpPost("notification/{userId:guid}")]
+    // public async Task<IActionResult> SendNotification([FromRoute] Guid userId, [FromBody] SendNotificationRequest request)
+    // {
+    //     var lowerEnumNames = Enum
+    //         .GetNames(typeof(NotificationType))
+    //         .Select(name => name.ToLowerInvariant());
+    //
+    //     bool exists = lowerEnumNames.Contains(request.Type.ToLowerInvariant());
+    //     
+    //     if (exists)
+    //     {
+    //         Console.WriteLine($"Parsed thành công: {request.Type}");
+    //     }
+    //     else
+    //     {
+    //         return StatusCode(300, GlobalResponse<string>.Error($"{request.Type} không hợp lệ", 300));
+    //     }
+    //     
+    //     try
+    //     {
+    //         var notification = new Notification
+    //         {
+    //             UserId = userId,
+    //             
+    //         };
+    //         await mediator.Send(
+    //             new SendNotificationCommand(notification));
+    //         
+    //         return Ok(GlobalResponse<string>.Success("User created successfully."));
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
+    //     }
+    // }
     
     [HttpPost("doctor")]
     public async Task<IActionResult> CreateDoctor([FromForm] CreateDoctorRequest request)
@@ -156,5 +158,24 @@ public class AdminController(IMediator mediator) : Controller
         {
             return StatusCode(500, GlobalResponse<string>.Error(e.Message, 500));
         }
+    }
+    
+    [HttpPost("send-to-doctors")]
+    public async Task<IActionResult> SendToDoctors([FromBody] SendNotificationRequest req)
+    {
+        if (!req.DoctorIds.Any() || string.IsNullOrWhiteSpace(req.Message))
+            return BadRequest("DoctorIds và Message không được rỗng.");
+
+        var timestamp = DateTime.UtcNow;
+        foreach (var doctorId in req.DoctorIds)
+        {
+            var groupName = NotificationHub.GetGroupName(doctorId);
+            await hubContext.Clients.Group(groupName).SendAsync("ReceiveNotification", new {
+                Content = req.Message,
+                Timestamp = timestamp,
+                From = "Admin"
+            });
+        }
+        return Ok(new { SentTo = req.DoctorIds.Count });
     }
 }
