@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace MediSchedule.Infrastructure.Hubs;
 
-[Authorize]
+// [Authorize]
 public class NotificationHub : Hub
 {
     private static readonly ConcurrentDictionary<Guid, string> OnlineDoctors = new();
@@ -19,14 +19,18 @@ public class NotificationHub : Hub
                 Guid.TryParse(docIdString, out var docId))
             {
                 OnlineDoctors[docId] = Context.ConnectionId;
+                await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(docId));
                 await base.OnConnectedAsync();
                 return;
             }
             
-            var sessionIdStr = httpContext.Request.Query["sessionId"].ToString();
-            if (Guid.TryParse(sessionIdStr, out var sessionId))
+            if (httpContext.Request.Query.TryGetValue("sessionId", out var sessionIdStr) &&
+                Guid.TryParse(sessionIdStr, out var sessionId))
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(sessionId));
+                var groupName = GetSessionGroupName(sessionId);
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+                await base.OnConnectedAsync();
+                return;
             }
         }
 
@@ -43,14 +47,18 @@ public class NotificationHub : Hub
             Guid.TryParse(docIdString, out var docId))
         {
             OnlineDoctors.TryRemove(docId, out _);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName(docId));
             await base.OnDisconnectedAsync(exception);
             return;
         }
         
-        var sessionIdStr = httpContext.Request.Query["sessionId"].ToString();
-        if (Guid.TryParse(sessionIdStr, out var sessionId))
+        if (httpContext != null &&
+            httpContext.Request.Query.TryGetValue("sessionId", out var sessionIdStr) &&
+            Guid.TryParse(sessionIdStr, out var sessionId))
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName(sessionId));
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetSessionGroupName(sessionId));
+            await base.OnDisconnectedAsync(exception);
+            return;
         }
         
         await base.OnDisconnectedAsync(exception);
@@ -61,7 +69,7 @@ public class NotificationHub : Hub
     {
         foreach (var sessionId in sessionIds)
         {
-            var groupName = GetGroupName(sessionId);
+            var groupName = GetSessionGroupName(sessionId);
             await Clients.Group(groupName).SendAsync("ReceiveNotification", new {
                 Content = content,
                 FromConnectionId = Context.ConnectionId,
@@ -71,4 +79,5 @@ public class NotificationHub : Hub
     }
     
     public static string GetGroupName(Guid userId) => $"user-{userId}";
+    public static string GetSessionGroupName(Guid sessionId) => $"session-{sessionId}";
 }
