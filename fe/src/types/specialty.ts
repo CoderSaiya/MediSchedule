@@ -1,6 +1,7 @@
 import {DoctorDto} from "@/types/user";
 
 export interface Specialty {
+    id: string;
     icon: string;
     title: string;
     description: string;

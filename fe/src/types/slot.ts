@@ -8,3 +8,9 @@ export interface GetTimeSlotsParams {
     doctorId: string
     date: string // Format: YYYY-MM-DD
 }
+
+export interface Slot {
+    day: string;
+    startTime: string;
+    endTime: string;
+}

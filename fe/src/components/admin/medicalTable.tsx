@@ -1,18 +1,42 @@
 'use client';
 
-import { Table, Button, Modal } from 'antd';
+import {Table, Button, Modal, message, Popconfirm} from 'antd';
 import { useEffect, useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
-import axios from 'axios';
 import { Plus, Trash2, Pencil } from 'lucide-react';
 import MedicineForm from '@/components/admin/medicalForm'
-import { useGetMedicinesQuery } from '@/api';
+import {useDeleteMedicineMutation, useGetMedicinesQuery} from '@/api';
 import { MedicineDto } from '@/types/doctor';
 
 const MedicalTable = () => {
     const [showForm, setShowForm] = useState(false);
+    const [editingMedicine, setEditingMedicine] = useState<MedicineDto | null>(null);
+
     const { data: medicineRes, isLoading, refetch } = useGetMedicinesQuery();
     const medicines = medicineRes?.data || []
+
+    const [deleteMedicine, { isLoading: isDeleting }] = useDeleteMedicineMutation();
+
+    const handleAdd = () => {
+        setEditingMedicine(null);
+        setShowForm(true);
+    };
+
+    const handleEdit = (medicine: MedicineDto) => {
+        setEditingMedicine(medicine);
+        setShowForm(true);
+    };
+
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteMedicine(id).unwrap();
+            message.success('Xóa thuốc thành công');
+            refetch();
+        } catch (error) {
+            console.error(error);
+            message.error('Xóa thuốc thất bại');
+        }
+    };
 
     const columns: ColumnsType<MedicineDto> = [
         {
@@ -62,14 +86,27 @@ const MedicalTable = () => {
             key: 'actions',
             align: 'center',
             width: '20%',
-            render: () => (
+            render: (_, record) => (
                 <div className="flex justify-center gap-2">
-                    <Button className="flex items-center gap-1 px-3 py-1 bg-yellow-400 text-white hover:!bg-yellow-500">
+                    <Button
+                        className="flex items-center gap-1 px-3 py-1 bg-yellow-400 text-white hover:!bg-yellow-500"
+                        onClick={() => handleEdit(record)}
+                    >
                         <Pencil size={16} /> Sửa
                     </Button>
-                    <Button className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white hover:!bg-red-600">
-                        <Trash2 size={16} /> Xoá
-                    </Button>
+                    <Popconfirm
+                        title="Bạn có chắc muốn xóa?"
+                        onConfirm={() => handleDelete(record.id)}
+                        okText="Có"
+                        cancelText="Hủy"
+                        >
+                        <Button
+                            loading={isDeleting}
+                            className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white hover:!bg-red-600"
+                        >
+                            <Trash2 size={16} /> Xoá
+                        </Button>
+                    </Popconfirm>
                 </div>
             ),
         },
@@ -80,7 +117,7 @@ const MedicalTable = () => {
             <div className="flex justify-between items-center mb-5">
                 <span className="text-teal-500 font-semibold text-lg">Danh sách Thuốc</span>
                 <Button className="bg-blue-500 text-white hover:!bg-blue-600 hover:!text-white flex items-center gap-1"
-                    onClick={() => setShowForm(true)}
+                    onClick={handleAdd}
                 >
 
                     <Plus size={16} /> Thêm thuốc
@@ -102,18 +139,27 @@ const MedicalTable = () => {
                         [&_.ant-pagination-item]:!border-teal-500"
             />
             <Modal
-                title="Thêm thuốc mới"
+                title={editingMedicine ? 'Chỉnh sửa thuốc' : 'Thêm thuốc mới'}
                 open={showForm}
-                onCancel={() => setShowForm(false)}
+                onCancel={() => {
+                    setShowForm(false);
+                    setEditingMedicine(null);
+                }}
                 footer={null}
                 width={700}
+                destroyOnHidden
             >
                 <MedicineForm
+                    medicine={editingMedicine}
                     onSuccess={() => {
                         setShowForm(false);
+                        setEditingMedicine(null);
                         refetch();
                     }}
-                    onCancel={() => setShowForm(false)}
+                    onCancel={() => {
+                        setShowForm(false);
+                        setEditingMedicine(null);
+                    }}
                 />
             </Modal>
 

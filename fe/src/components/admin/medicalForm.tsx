@@ -1,27 +1,62 @@
 'use client';
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Form, Input, Row, Col, Button, message } from 'antd';
-import { useCreateMedicineMutation } from '@/api';
+import {useCreateMedicineMutation, useUpdateMedicineMutation} from '@/api';
+import { MedicineDto } from '@/types/doctor';
 
 interface MedicineFormProps {
+    medicine?: MedicineDto | null;
     onSuccess: () => void;
     onCancel: () => void;
 }
 
-const MedicineForm: React.FC<MedicineFormProps> = ({ onSuccess, onCancel }) => {
+const MedicineForm: React.FC<MedicineFormProps> = ({ medicine, onSuccess, onCancel }) => {
     const [form] = Form.useForm();
-    const [createMedicine, { isLoading }] = useCreateMedicineMutation();
+    const [createMedicine, { isLoading: isCreating }] = useCreateMedicineMutation();
+    const [updateMedicine, { isLoading: isUpdating }] = useUpdateMedicineMutation();
+
+    useEffect(() => {
+        if (medicine) {
+            form.setFieldsValue({
+                name: medicine.name,
+                genericName: medicine.genericName,
+                strength: medicine.strength,
+                manufacturer: medicine.manufacturer,
+                description: medicine.description || '',
+            });
+        } else {
+            form.resetFields();
+        }
+    }, [medicine, form]);
 
     const onFinish = async (values: any) => {
         try {
-            await createMedicine(values).unwrap();
-            message.success('Thêm thuốc thành công!');
+            const formData = new FormData();
+
+            formData.append('Name', values.name);
+            formData.append('GenericName', values.genericName);
+            formData.append('Strength', values.strength);
+            formData.append('Manufacturer', values.manufacturer);
+            formData.append('Description', values.description || '');
+
+            if (medicine) {
+                formData.append('Id', medicine.id);
+                await updateMedicine(formData).unwrap();
+                message.success('Cập nhật thuốc thành công!');
+            }else {
+                await createMedicine(formData).unwrap();
+                message.success('Thêm thuốc thành công!');
+            }
             form.resetFields();
             onSuccess();
         } catch (error: any) {
             console.error('Lỗi khi thêm thuốc:', error);
-            message.error(`Thêm thuốc thất bại: ${error?.data?.message || 'Không xác định'}`);
+            const errorMsg =
+                error?.data?.message ||
+                error?.error ||
+                (medicine ? 'Cập nhật thất bại!' : 'Thêm mới thất bại!');
+            message.error(errorMsg);
         }
     };
 
@@ -30,12 +65,12 @@ const MedicineForm: React.FC<MedicineFormProps> = ({ onSuccess, onCancel }) => {
             form={form}
             layout="vertical"
             onFinish={onFinish}
-            className="p-6 bg-gray-50 rounded-lg shadow-md"
+            className="p-6 bg-white rounded-lg shadow-md"
         >
             <Row gutter={16}>
                 <Col span={12}>
                     <Form.Item name="name" label="Tên thuốc" rules={[{ required: true }]}>
-                        <Input />
+                        <Input placeholder="Tên thuốc"/>
                     </Form.Item>
                     <Form.Item name="genericName" label="Hoạt chất" rules={[{ required: true }]}>
                         <Input />
@@ -56,10 +91,10 @@ const MedicineForm: React.FC<MedicineFormProps> = ({ onSuccess, onCancel }) => {
             </Row>
 
             <Form.Item className="text-center mt-4">
-                <Button type="primary" htmlType="submit" className="mr-2" loading={isLoading}>
-                    Thêm thuốc
-                </Button>
                 <Button onClick={onCancel}>Hủy</Button>
+                <Button type="primary" htmlType="submit" loading={isCreating || isUpdating}>
+                    {medicine ? 'Cập nhật' : 'Thêm  thuốc'}
+                </Button>
             </Form.Item>
         </Form>
     );

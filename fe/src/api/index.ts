@@ -179,6 +179,19 @@ export const api = createApi({
                 body: formData,
             }),
         }),
+        updateDoctor: builder.mutation<Response<string>, FormData>({
+            query: (formData) => ({
+                url: 'Admin/doctor',
+                method: 'PUT',
+                body: formData,
+            }),
+        }),
+        deleteDoctor: builder.mutation<Response<string>, string>({
+            query: (id) => ({
+                url: `Admin/doctor/${id}`,
+                method: 'DELETE',
+            }),
+        }),
         createPrescription: builder.mutation<Response<CreatePrescriptionResponse>, CreatePrescriptionRequest>({
             query: ({ appointmentId, notes, file, items }) => {
                 const formData = new FormData()
@@ -240,11 +253,37 @@ export const api = createApi({
                 body: formData,
             }),
         }),
-        createMedicine: builder.mutation<Response<string>, any>({
-            query: (medicine) => ({
+        updateHospital: builder.mutation<Response<string>, FormData>({
+            query: (formData) => ({
+                url: 'Admin/hospital',
+                method: 'PUT',
+                body: formData,
+            }),
+        }),
+        deleteHospital: builder.mutation<Response<string>, string>({
+            query: (id) => ({
+                url: `Admin/hospital/${id}`,
+                method: 'DELETE',
+            }),
+        }),
+        createMedicine: builder.mutation<Response<string>, FormData>({
+            query: (formData) => ({
                 url: 'Admin/medicine',
                 method: 'POST',
-                body: medicine,
+                body: formData,
+            }),
+        }),
+        updateMedicine: builder.mutation<Response<string>, FormData>({
+            query: (formData) => ({
+                url: 'Admin/medicine',
+                method: 'PUT',
+                body: formData,
+            }),
+        }),
+        deleteMedicine: builder.mutation<Response<string>, string>({
+            query: (id) => ({
+                url: `Admin/medicine/${id}`,
+                method: 'DELETE',
             }),
         }),
         getAppointmentsByDoctor: builder.query<Response<Appointment[]>, string>({
@@ -273,11 +312,17 @@ export const {
     useGetTodayAppointmentsQuery,
     useUpdateAppointmentStatusMutation,
     useCreateHospitalMutation,
+    useUpdateHospitalMutation,
+    useDeleteHospitalMutation,
     useCreatePrescriptionMutation,
     useGetMedicinesQuery,
     useGetDoctorProfileQuery,
     useGetHospitalsQuery,
     useCreateDoctorMutation,
+    useUpdateDoctorMutation,
+    useDeleteDoctorMutation,
     useCreateMedicineMutation,
+    useUpdateMedicineMutation,
+    useDeleteMedicineMutation,
     useGetAppointmentsByDoctorQuery
 } = api;

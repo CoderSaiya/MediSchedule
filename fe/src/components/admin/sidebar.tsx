@@ -36,27 +36,27 @@ const AdminSideBar = () => {
         // Menu items
         {
             key: "dashboard",
-            label: <Link href={"/dashboard"}>Bảng điều khiển</Link>,
+            label: <Link href={"/admin/dashboard"}>Bảng điều khiển</Link>,
             icon: <LayoutDashboard size={18} />,
         },
         {
             key: "doctors",
-            label: <Link href={"/dashboard/doctor"}>Bác sĩ</Link>,
+            label: <Link href={"/admin/dashboard/doctor"}>Bác sĩ</Link>,
             icon: <BriefcaseMedical size={18} />,
         },
         {
             key: "medicines",
-            label: <Link href={"/dashboard/medical"}>Thuốc</Link>,
+            label: <Link href={"/admin/dashboard/medical"}>Thuốc</Link>,
             icon: <Pill size={18} />,
         },
         {
             key: "hospitals",
-            label: <Link href={"/dashboard/hospital"}>Bệnh viện</Link>,
+            label: <Link href={"/admin/dashboard/hospital"}>Bệnh viện</Link>,
             icon: <Hospital size={18} />,
         },
         {
             key: "notifications",
-            label: <Link href={"/dashboard/notification"}>Thông báo</Link>,
+            label: <Link href={"/admin/dashboard/notification"}>Thông báo</Link>,
             icon: <Bell size={18} />,
         },
 

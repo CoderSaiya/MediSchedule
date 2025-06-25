@@ -1,20 +1,42 @@
 'use client';
 
-import { Button, Modal, Table } from 'antd';
+import {Button, message, Modal, Popconfirm, Table} from 'antd';
 import { useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import HospitalForm from '@/components/admin/hospitalForm';
-import { useGetHospitalsQuery } from '@/api';
+import {useDeleteHospitalMutation, useGetHospitalsQuery} from '@/api';
 import { Hospital } from "@/types/hospital"
 
 const HospitalTable = () => {
     const [showForm, setShowForm] = useState(false);
+    const [editingHospital, setEditingHospital] = useState<Hospital | null>(null);
 
     const { data: hospitalRes, isLoading, refetch } = useGetHospitalsQuery();
     const hospitals = hospitalRes?.data || [];
 
+    const [deleteHospital, { isLoading: isDeleting }] = useDeleteHospitalMutation();
 
+        const handleAdd = () => {
+        setEditingHospital(null);
+        setShowForm(true);
+    };
+
+    const handleEdit = (hospital: Hospital) => {
+        setEditingHospital(hospital);
+        setShowForm(true);
+    };
+
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteHospital(id).unwrap();
+            message.success('Xóa bệnh viện thành công');
+            refetch();
+        } catch (error: any) {
+            console.error(error);
+            message.error('Xóa bệnh viện thất bại');
+        }
+    };
 
     const columns: ColumnsType<Hospital> = [
         {
@@ -67,14 +89,27 @@ const HospitalTable = () => {
             key: 'actions',
             align: 'center',
             width: '15%',
-            render: () => (
+            render: (_, record) => (
                 <div className="flex justify-center gap-2">
-                    <Button className="flex items-center gap-1 px-3 py-1 bg-yellow-400 text-white hover:!bg-yellow-500">
+                    <Button
+                        className="flex items-center gap-1 px-3 py-1 bg-yellow-400 text-white hover:!bg-yellow-500"
+                        onClick={() => handleEdit(record)}
+                    >
                         <Pencil size={16} /> Sửa
                     </Button>
-                    <Button className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white hover:!bg-red-600">
-                        <Trash2 size={16} /> Xoá
-                    </Button>
+                    <Popconfirm
+                        title="Bạn có chắc muốn xóa?"
+                        onConfirm={() => handleDelete(record.id)}
+                        okText="Có"
+                        cancelText="Hủy"
+                    >
+                        <Button
+                            loading={isDeleting}
+                            className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white hover:!bg-red-600"
+                        >
+                            <Trash2 size={16} /> Xoá
+                        </Button>
+                    </Popconfirm>
                 </div>
             ),
         },
@@ -86,7 +121,7 @@ const HospitalTable = () => {
                 <span className="text-teal-500 font-semibold text-lg">Danh sách Bệnh viện</span>
                 <Button
                     className="bg-blue-500 text-white hover:!bg-blue-600 hover:!text-white flex items-center gap-1"
-                    onClick={() => setShowForm(true)}
+                    onClick={handleAdd}
                 >
                     <Plus size={16} /> Thêm bệnh viện
                 </Button>
@@ -108,7 +143,7 @@ const HospitalTable = () => {
             />
 
             <Modal
-                title="Thêm bệnh viện mới"
+                title={editingHospital ? 'Chỉnh sửa bệnh viện' : 'Thêm bệnh viện mới'}
                 open={showForm}
                 onCancel={() => setShowForm(false)}
                 footer={null}
@@ -117,11 +152,16 @@ const HospitalTable = () => {
                 style={{ top: 20 }}
             >
                 <HospitalForm
+                    hospital={editingHospital}
                     onSuccess={() => {
                         setShowForm(false);
                         refetch();
+                        setEditingHospital(null);
                     }}
-                    onCancel={() => setShowForm(false)}
+                    onCancel={() => {
+                        setShowForm(false);
+                        setEditingHospital(null);
+                    }}
                 />
             </Modal>
         </>
