@@ -226,7 +226,7 @@ export default function DoctorsPage() {
                                         <div className="w-32 h-32 flex-shrink-0 relative overflow-hidden bg-slate-100">
                                             <Avatar className="w-full h-full rounded-none">
                                                 <AvatarImage
-                                                    src={doctor.avatar}
+                                                    src={doctor.image}
                                                     alt={doctor.name}
                                                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                                                 />
