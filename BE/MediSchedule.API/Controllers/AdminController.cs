@@ -72,6 +72,21 @@ public class AdminController(IMediator mediator, IHubContext<NotificationHub> hu
         }
     }
     
+    [HttpPut("doctor")]
+    public async Task<IActionResult> UpdateDoctor([FromForm] UpdateDoctorCommand command)
+    {
+        try
+        {
+            await mediator.Send(command);
+            
+            return Ok(GlobalResponse<string>.Success("Doctor updated successfully."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, GlobalResponse<string>.Error(ex.Message, 500));
+        }
+    }
+    
     [HttpDelete("doctor")]
     public async Task<IActionResult> DeleteDoctor([FromForm] DeleteDoctorCommand command)
     {
@@ -221,12 +236,13 @@ public class AdminController(IMediator mediator, IHubContext<NotificationHub> hu
         }
     }
     
-    [HttpDelete("hospital")]
-    public async Task<IActionResult> CreateHospital([FromForm] UpdateHospitalCommand request)
+    [HttpDelete("hospital/{id:guid}")]
+    public async Task<IActionResult> CreateHospital([FromRoute] Guid id)
     {
         try
         {
-            await mediator.Send(request);
+            await mediator.Send(
+                new DeleteHospitalCommand(id));
             
             return Ok(GlobalResponse<string>.Success("Hospital created successfully."));
         }
