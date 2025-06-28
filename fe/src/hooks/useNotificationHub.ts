@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import {Notification} from "@/types/notification";
 
 export interface NotificationMessage {
     content: string;
@@ -14,7 +15,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export function useNotificationHub(doctorId: string | null | undefined) {
     const [connection, setConnection] = useState<HubConnection | null>(null);
-    const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isConnected, setIsConnected] = useState(false);
     const connectionRef = useRef<HubConnection | null>(null);
     const isConnectingRef = useRef(false);
@@ -61,11 +62,12 @@ export function useNotificationHub(doctorId: string | null | undefined) {
             // Event handlers
             newConnection.on("ReceiveNotification", (payload: any) => {
                 console.log("Received notification:", payload);
-                const msg: NotificationMessage = {
+                const msg: Notification = {
                     content: payload.Content || payload.content,
-                    timestamp: payload.Timestamp || payload.timestamp || new Date().toISOString(),
-                    from: payload.From,
-                    fromConnectionId: payload.FromConnectionId,
+                    createdAt: payload.CreatedAt || payload.createdAt || new Date().toISOString(),
+                    recipient: payload.Recipient || payload.recipient,
+                    notificationType: payload.NotificationType || payload.notificationType,
+                    id: payload.Id || payload.id,
                 };
                 setNotifications(prev => [msg, ...prev]);
             });
@@ -115,7 +117,7 @@ export function useNotificationHub(doctorId: string | null | undefined) {
     }, [doctorId, connectToHub, cleanupConnection]);
 
     // Hàm gửi notification
-    const sendNotification = useCallback(async (targetSessionIds: string[], content: string) => {
+    const sendNotification = useCallback(async (targetSessionIds: string[], type: string, content: string) => {
         if (!connectionRef.current || !isConnected) {
             console.warn("SignalR connection not available");
             return false;
@@ -124,7 +126,7 @@ export function useNotificationHub(doctorId: string | null | undefined) {
         try {
             // Convert string array to Guid array if needed
             const sessionGuids = targetSessionIds.map(id => id);
-            await connectionRef.current.invoke("SendNotificationAsync", sessionGuids, content);
+            await connectionRef.current.invoke("SendNotificationAsync", sessionGuids, type, content);
             console.log("Notification sent successfully");
             return true;
         } catch (error) {

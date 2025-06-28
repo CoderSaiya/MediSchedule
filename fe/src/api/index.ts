@@ -291,7 +291,13 @@ export const api = createApi({
                 url: `Doctor/appointments/${doctorId}`,
                 method: "GET",
             }),
-        })
+        }),
+        getNotifications: builder.query<Response<Notification[]>, void>({
+            query: () => ({
+                url: `Admin/notifications`,
+                method: "GET",
+            }),
+        }),
     }),
 });
 
@@ -324,5 +330,6 @@ export const {
     useCreateMedicineMutation,
     useUpdateMedicineMutation,
     useDeleteMedicineMutation,
-    useGetAppointmentsByDoctorQuery
+    useGetAppointmentsByDoctorQuery,
+    useGetNotificationsQuery,
 } = api;

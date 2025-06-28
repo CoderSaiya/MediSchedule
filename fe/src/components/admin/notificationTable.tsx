@@ -4,27 +4,34 @@ import { useState } from 'react';
 import type { ColumnsType } from 'antd/es/table';
 import { Modal } from 'antd';
 import { Plus, Trash2 } from 'lucide-react';
+import {useGetNotificationsQuery} from "@/api";
+import NotificationForm from "@/components/admin/notification-form";
 
 // Dummy data
-const notifications = [
-    {
-        id: '1',
-        user: { fullName: 'Nguyễn Văn A', email: 'a@gmail.com' },
-        type: 'Email',
-        content: 'Hệ thống sẽ bảo trì vào lúc 23:00 hôm nay.',
-        createdAt: new Date().toISOString(),
-    },
-    {
-        id: '2',
-        user: { fullName: 'Trần Thị B', email: 'b@gmail.com' },
-        type: 'Sms',
-        content: 'Đừng quên lịch khám ngày mai lúc 9:00.',
-        createdAt: new Date().toISOString(),
-    },
-];
+// const notifications = [
+//     {
+//         id: '1',
+//         user: { fullName: 'Nguyễn Văn A', email: 'a@gmail.com' },
+//         type: 'Email',
+//         content: 'Hệ thống sẽ bảo trì vào lúc 23:00 hôm nay.',
+//         createdAt: new Date().toISOString(),
+//     },
+//     {
+//         id: '2',
+//         user: { fullName: 'Trần Thị B', email: 'b@gmail.com' },
+//         type: 'Sms',
+//         content: 'Đừng quên lịch khám ngày mai lúc 9:00.',
+//         createdAt: new Date().toISOString(),
+//     },
+// ];
 
 const NotificationTable = () => {
     const [showForm, setShowForm] = useState(false);
+
+    const {data: notificationResponse} = useGetNotificationsQuery();
+    const notifications = notificationResponse?.data || []
+
+    var currentDoctorId = localStorage.getItem('userId') as string;
 
     const columns: ColumnsType<any> = [
         {
@@ -36,15 +43,15 @@ const NotificationTable = () => {
         },
         {
             title: 'Người nhận',
-            key: 'user',
+            key: 'recipient',
             align: 'center',
             width: '20%',
-            render: (_, record) => record.user?.fullName || record.user?.email || '---',
+            render: (_, record) => record.recipient || record.user?.email || '---',
         },
         {
             title: 'Loại',
-            dataIndex: 'type',
-            key: 'type',
+            dataIndex: 'notificationType',
+            key: 'notificationType',
             align: 'center',
             width: '10%',
         },
@@ -61,7 +68,6 @@ const NotificationTable = () => {
             key: 'createdAt',
             align: 'center',
             width: '15%',
-            render: (value: string) => new Date(value).toLocaleString(),
         },
         {
             title: 'Tính năng',
@@ -116,7 +122,12 @@ const NotificationTable = () => {
                 destroyOnHidden
                 style={{ top: 20 }}
             >
-                <div className="text-gray-400 text-center py-10">Form gửi thông báo sẽ được hiển thị ở đây.</div>
+                {showForm && (
+                    <NotificationForm
+                        doctorId={currentDoctorId}
+                        onClose={() => setShowForm(false)}
+                    />
+                )}
             </Modal>
         </>
     );
