@@ -166,7 +166,6 @@ export function QRScanner({ onScanSuccess }: QRScannerProps) {
         const canvas = canvasRef.current
         const context = canvas.getContext("2d")
 
-        // Check if video is ready and has data
         if (!context || video.readyState !== video.HAVE_ENOUGH_DATA) {
             // Tiếp tục quét nếu video chưa sẵn sàng
             if (scanningRef.current) {
@@ -175,14 +174,12 @@ export function QRScanner({ onScanSuccess }: QRScannerProps) {
             return
         }
 
-        // Set canvas size to match video dimensions
+        // Set canvas size
         canvas.width = video.videoWidth || 640
         canvas.height = video.videoHeight || 480
 
-        // Draw current video frame to canvas
         context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-        // Get image data and scan for QR code
         try {
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
             const code = jsQR(imageData.data, imageData.width, imageData.height, {

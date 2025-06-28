@@ -9,6 +9,8 @@ import { Clock, Phone, FileText, MoreVertical, CheckCircle, AlertTriangle, Calen
 import {Appointment} from "@/types/appointment";
 import {useState} from "react";
 import {PrescriptionForm} from "@/components/doctor-page/prescription-form";
+import {useUpdateAppointmentStatusMutation} from "@/api";
+import {message} from "antd";
 
 interface AppointmentCardProps {
     appointment: Appointment
@@ -17,6 +19,8 @@ interface AppointmentCardProps {
 
 export function AppointmentCard({ appointment, refetch }: AppointmentCardProps) {
     const [showPrescriptionForm, setShowPrescriptionForm] = useState(false)
+
+    const [updateAppointmentStatus] = useUpdateAppointmentStatusMutation()
 
     const getStatusConfig = (status: string) => {
         switch (status) {
@@ -50,12 +54,29 @@ export function AppointmentCard({ appointment, refetch }: AppointmentCardProps) 
     const statusConfig = getStatusConfig(appointment.status)
     const StatusIcon = statusConfig.icon
 
+    const handleUpdateStatus = () => {
+        try {
+            updateAppointmentStatus({
+                appointmentId: appointment.id,
+                status: 'confirmed'
+            })
+            refetch()
+        }catch (e: any) {
+            message.error(e).then()
+        }
+    }
+
+
     const getActionButtons = () => {
         switch (appointment.status) {
             case "pending":
                 return (
                     <>
-                        <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
+                        <Button
+                            size="sm"
+                            className="bg-teal-600 hover:bg-teal-700"
+                            onClick={handleUpdateStatus}
+                        >
                             Bắt đầu khám
                         </Button>
                         <Button size="sm" variant="outline">
