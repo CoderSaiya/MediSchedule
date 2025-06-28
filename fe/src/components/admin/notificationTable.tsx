@@ -28,7 +28,7 @@ import NotificationForm from "@/components/admin/notification-form";
 const NotificationTable = () => {
     const [showForm, setShowForm] = useState(false);
 
-    const {data: notificationResponse} = useGetNotificationsQuery();
+    const {data: notificationResponse, refetch} = useGetNotificationsQuery();
     const notifications = notificationResponse?.data || []
 
     var currentDoctorId = localStorage.getItem('userId') as string;
@@ -126,6 +126,7 @@ const NotificationTable = () => {
                     <NotificationForm
                         doctorId={currentDoctorId}
                         onClose={() => setShowForm(false)}
+                        refetch={refetch}
                     />
                 )}
             </Modal>

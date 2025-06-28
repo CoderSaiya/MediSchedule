@@ -6,9 +6,10 @@ import { useNotificationHub } from '@/hooks/useNotificationHub';
 interface Props {
     doctorId: string;
     onClose: () => void;
+    refetch: () => void;
 }
 
-export default function NewNotificationForm({ doctorId, onClose }: Props) {
+export default function NewNotificationForm({ doctorId, onClose, refetch }: Props) {
     const [form] = Form.useForm();
     const { data: doctorsResponse, isLoading: doctorsLoading } = useGetDoctorsQuery();
     const doctors = doctorsResponse?.data || [];
@@ -22,6 +23,7 @@ export default function NewNotificationForm({ doctorId, onClose }: Props) {
         if (success) {
             message.success('Gửi thông báo thành công');
             form.resetFields();
+            refetch();
             onClose();
         } else {
             message.error('Gửi thông báo thất bại');
