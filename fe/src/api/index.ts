@@ -167,7 +167,7 @@ export const api = createApi({
                 formData.append('status', status)
                 return {
                     url: `Doctor/appointment/status/${appointmentId}`,
-                    method: "POST",
+                    method: "PUT",
                     body: formData,
                 }
             },
