@@ -15,7 +15,7 @@ import {
     UserCheck,
     ArrowLeft,
     Minimize2,
-    Maximize2,
+    Maximize2, HelpCircle,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -29,6 +29,61 @@ interface Message {
 
 type ChatMode = "selection" | "ai" | "doctor"
 
+const predefinedQuestions = {
+    ai: [
+        {
+            question: "Triệu chứng sốt cao",
+            answer:
+                "Sốt cao có thể là dấu hiệu của nhiều bệnh lý khác nhau. Nếu sốt trên 38.5°C kéo dài hơn 3 ngày, bạn nên đến gặp bác sĩ. Trong thời gian chờ đợi, hãy uống nhiều nước, nghỉ ngơi đầy đủ và có thể dùng thuốc hạ sốt theo chỉ dẫn.",
+        },
+        {
+            question: "Đau đầu thường xuyên",
+            answer:
+                "Đau đầu thường xuyên có thể do căng thẳng, thiếu ngủ, hoặc các vấn đề sức khỏe khác. Bạn nên theo dõi tần suất, cường độ đau và các yếu tố kích hoạt. Nếu đau đầu nghiêm trọng hoặc kèm theo buồn nôn, hãy đến gặp bác sĩ ngay.",
+        },
+        {
+            question: "Ho kéo dài",
+            answer:
+                "Ho kéo dài hơn 2 tuần có thể là dấu hiệu của nhiễm trùng đường hô hấp, dị ứng hoặc các vấn đề khác. Bạn nên uống nhiều nước ấm, tránh khói bụi và đến gặp bác sĩ nếu ho không thuyên giảm hoặc có đờm máu.",
+        },
+        {
+            question: "Đau bụng",
+            answer:
+                "Đau bụng có thể do nhiều nguyên nhân từ nhẹ đến nghiêm trọng. Vị trí, tính chất và thời gian đau rất quan trọng để chẩn đoán. Nếu đau bụng dữ dội, kèm sốt hoặc nôn mửa, hãy đến cơ sở y tế ngay lập tức.",
+        },
+        {
+            question: "Mất ngủ",
+            answer:
+                "Mất ngủ có thể ảnh hưởng nghiêm trọng đến sức khỏe. Hãy thử duy trì thói quen ngủ đều đặn, tránh caffeine buổi tối, tạo môi trường ngủ thoải mái. Nếu tình trạng kéo dài, bạn nên tham khảo ý kiến bác sĩ.",
+        },
+        {
+            question: "Làm thế nào để đặt lịch khám?",
+            answer:
+                "Bạn có thể đặt lịch khám qua ứng dụng MediSchedule hoặc gọi hotline. Chúng tôi có lịch khám từ 7:00 - 21:00 hàng ngày. Vui lòng chuẩn bị thông tin cá nhân và mô tả sơ bộ về tình trạng sức khỏe.",
+        },
+        {
+            question: "Chi phí khám bệnh",
+            answer:
+                "Chi phí khám bệnh phụ thuộc vào loại dịch vụ và bác sĩ. Khám tổng quát từ 200.000 - 500.000 VNĐ, chuyên khoa từ 300.000 - 800.000 VNĐ. Chúng tôi chấp nhận thanh toán bằng tiền mặt, thẻ và chuyển khoản.",
+        },
+        {
+            question: "Thời gian chờ khám",
+            answer:
+                "Thời gian chờ khám trung bình là 15-30 phút. Để giảm thời gian chờ, bạn nên đặt lịch trước và đến đúng giờ hẹn. Chúng tôi sẽ thông báo nếu có sự thay đổi về lịch trình.",
+        },
+        {
+            question: "Chuẩn bị gì khi đi khám?",
+            answer:
+                "Bạn nên mang theo CMND/CCCD, thẻ BHYT (nếu có), kết quả xét nghiệm cũ, danh sách thuốc đang dùng và ghi chú về triệu chứng. Nên mặc quần áo thoải mái và đến sớm 15 phút.",
+        },
+        {
+            question: "Dịch vụ cấp cứu",
+            answer:
+                "Chúng tôi có dịch vụ cấp cứu 24/7. Trong trường hợp khẩn cấp, hãy gọi ngay hotline cấp cứu hoặc đến trực tiếp. Đội ngũ y tế sẽ sẵn sàng hỗ trợ bạn trong mọi tình huống.",
+        },
+    ]
+}
+
 export function ChatPopup() {
     const [isOpen, setIsOpen] = useState(false)
     const [isMinimized, setIsMinimized] = useState(false)
@@ -38,6 +93,8 @@ export function ChatPopup() {
     const [isTyping, setIsTyping] = useState(false)
     const [sessionId, setSessionId] = useState<string | null>(null)
     const [hubConnection, setHubConnection] = useState<HubConnection | null>(null)
+    const [showPredefinedQuestions, setShowPredefinedQuestions] = useState(false)
+    const [hasUserInteracted, setHasUserInteracted] = useState(false)
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const scrollToBottom = () => {
@@ -46,6 +103,17 @@ export function ChatPopup() {
     useEffect(() => {
         scrollToBottom()
     }, [messages])
+
+    // Thay thế useEffect hiện tại cho showPredefinedQuestions
+    useEffect(() => {
+        if (chatMode !== "selection") {
+            setShowPredefinedQuestions(true)
+            setHasUserInteracted(true)
+        } else {
+            setShowPredefinedQuestions(false)
+            setHasUserInteracted(false)
+        }
+    }, [chatMode])
 
     // Khi unmount, cho dừng connection
     useEffect(() => {
@@ -64,6 +132,8 @@ export function ChatPopup() {
         }
         setMessages([])
         setSessionId(null)
+        setShowPredefinedQuestions(false)
+        setHasUserInteracted(false)
 
         // 2) Tạo sessionId mới từ backend
         let apiPath = process.env.NEXT_PUBLIC_API_URL
@@ -154,6 +224,8 @@ export function ChatPopup() {
         setChatMode("selection")
         setMessages([])
         setSessionId(null)
+        setShowPredefinedQuestions(false)
+        setHasUserInteracted(false)
     }
 
     const handleSendMessage = async () => {
@@ -191,6 +263,17 @@ export function ChatPopup() {
         } else {
             console.warn("Hub chưa kết nối hoặc đã bị ngắt!")
         }
+    }
+
+    const handlePredefinedQuestion = (question: string, answer: string) => {
+        const responseMessage: Message = {
+            id: Date.now().toString() + "-predefined",
+            content: answer,
+            sender: chatMode === "ai" ? "bot" : "doctor",
+            timestamp: new Date(),
+            senderName: chatMode === "ai" ? "AI Assistant" : "Bác sĩ",
+        }
+        setMessages((prev) => [...prev, responseMessage])
     }
 
     if (!isOpen) {
@@ -326,6 +409,29 @@ export function ChatPopup() {
                             <>
                                 {/* Messages */}
                                 <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+
+                                    {showPredefinedQuestions && chatMode !== "selection" && (
+                                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3 mb-4">
+                                            <div className="flex items-center space-x-2 mb-2">
+                                                <HelpCircle className="h-4 w-4 text-blue-600" />
+                                                <span className="text-sm font-medium text-blue-800">Câu hỏi thường gặp</span>
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-2">
+                                                {predefinedQuestions[chatMode as keyof typeof predefinedQuestions]?.map((item, index) => (
+                                                    <Button
+                                                        key={index}
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handlePredefinedQuestion(item.question, item.answer)}
+                                                        className="justify-start text-left h-auto p-2 text-xs bg-white hover:bg-blue-50 border-blue-200 text-blue-700 whitespace-normal"
+                                                    >
+                                                        {item.question}
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {messages.map((message) => (
                                         <div
                                             key={message.id}
@@ -345,8 +451,8 @@ export function ChatPopup() {
                                                             </AvatarFallback>
                                                         </Avatar>
                                                         <span className="text-xs font-medium text-gray-600">
-                              {message.senderName}
-                            </span>
+                                                          {message.senderName}
+                                                        </span>
                                                     </div>
                                                 )}
                                                 <div className="whitespace-pre-line">{message.content}</div>
