@@ -156,9 +156,9 @@ const HospitalForm: React.FC<HospitalFormProps> = ({ hospital, onSuccess, onCanc
                         >
                             <Button icon={<ImageUp size={16} />}>Tải lên ảnh</Button>
                         </Upload>
-                        <div style={{ marginTop: 4, color: 'rgba(0,0,0,0.45)' }}>
-                            (Chọn để thay đổi hoặc thêm mới)
-                        </div>
+                        {/*<div style={{ marginTop: 4, color: 'rgba(0,0,0,0.45)' }}>*/}
+                        {/*    (Chọn để thay đổi hoặc thêm mới)*/}
+                        {/*</div>*/}
                     </Form.Item>
                 </Col>
 
@@ -197,14 +197,14 @@ const HospitalForm: React.FC<HospitalFormProps> = ({ hospital, onSuccess, onCanc
             </Row>
 
             <Form.Item className="text-center mt-4">
-                <>
+                <div>
                     <Button onClick={handleCancel} className="mr-2">
                         Hủy
                     </Button>
                     <Button type="primary" htmlType="submit" loading={isCreating || isUpdating}>
                         {hospital ? 'Cập nhật' : 'Thêm bệnh viện'}
                     </Button>
-                </>
+                </div>
             </Form.Item>
         </Form>
     );
