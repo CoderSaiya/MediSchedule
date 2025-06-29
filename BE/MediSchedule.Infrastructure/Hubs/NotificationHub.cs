@@ -1,11 +1,17 @@
 ﻿using System.Collections.Concurrent;
+using MediSchedule.Domain.Entities;
+using MediSchedule.Domain.Interfaces;
+using MediSchedule.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MediSchedule.Infrastructure.Hubs;
 
 // [Authorize]
-public class NotificationHub : Hub
+public class NotificationHub(
+    INotificationRepository notificationRepository,
+    IUnitOfWork unitOfWork
+    ) : Hub
 {
     private static readonly ConcurrentDictionary<Guid, string> OnlineDoctors = new();
     public override async Task OnConnectedAsync()
@@ -65,8 +71,14 @@ public class NotificationHub : Hub
     }
 
     [HubMethodName("SendNotificationAsync")]
-    public async Task SendNotificationAsync(List<Guid> sessionIds, string content)
+    public async Task SendNotificationAsync(List<Guid> sessionIds, string type, string content)
     {
+        if (!Enum.TryParse<NotificationType>(type, ignoreCase: true, out var notifType))
+        {
+            throw new HubException($"Loại thông báo không hợp lệ: {type}");
+        }
+        
+        var timestamp = DateTime.UtcNow;
         foreach (var sessionId in sessionIds)
         {
             var groupName = GetSessionGroupName(sessionId);
@@ -75,7 +87,16 @@ public class NotificationHub : Hub
                 FromConnectionId = Context.ConnectionId,
                 Timestamp = DateTime.UtcNow
             });
+            
+            var notification = new Notification {
+                UserId = sessionId,
+                Content = content,
+                Type = notifType,
+                CreatedAt = timestamp
+            };
+            await notificationRepository.AddAsync(notification);
         }
+        await unitOfWork.CommitAsync();
     }
     
     public static string GetGroupName(Guid userId) => $"user-{userId}";

@@ -14,6 +14,7 @@ public class GetSpecialtiesHandler(ISpecialtyRepository specialtyRepository) : I
         var specialties = await specialtyRepository.ListAsync(request.Filter);
         
         return specialties.Select(s => new SpecialtyResponse(
+            s.Id,
             Title: s.Name,
             Description: s.Description,
             Icon: s.Icon,

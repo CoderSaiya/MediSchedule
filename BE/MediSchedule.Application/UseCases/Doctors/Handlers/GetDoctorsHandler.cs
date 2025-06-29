@@ -12,6 +12,9 @@ public class GetDoctorsHandler(IDoctorRepository doctorRepository) : IRequestHan
             Id: d.Id,
             Name: $"BS. {d.Profile?.FullName ?? d.Username}",
             Specialty: d.Specialty.Name,
+            Hospital: d.Hospital?.Name ?? "",
+            LicenseNumber: d.LicenseNumber,
+            Biography: d.Biography,
             Rating: d.Reviews.Any()
                 ? d.Reviews.Average(r => r.Rating)
                 : 0.0,

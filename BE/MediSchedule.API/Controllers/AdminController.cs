@@ -7,6 +7,7 @@ using MediSchedule.Application.UseCases.Medicines.Commands;
 using MediSchedule.Application.UseCases.Monitors.Queries;
 using MediSchedule.Application.UseCases.Notifications.Commands;
 using MediSchedule.Application.UseCases.Notifications.Queries;
+using MediSchedule.Application.UseCases.Statistics.Queries;
 using MediSchedule.Application.UseCases.Users.Queries;
 using MediSchedule.Domain.Entities;
 using MediSchedule.Domain.Specifications;
@@ -275,8 +276,56 @@ public class AdminController(IMediator mediator, IHubContext<NotificationHub> hu
     [HttpGet("notifications")]
     public async Task<IActionResult> GetNotifications()
     {
-        var stats = await mediator.Send(
+        var notifications = await mediator.Send(
             new GetNotificationsQuery());
-        return Ok(GlobalResponse<IEnumerable<NotificationResponse>>.Success(stats));
+        return Ok(GlobalResponse<IEnumerable<NotificationResponse>>.Success(notifications));
+    }
+
+    [HttpGet("specialty-stats")]
+    public async Task<IActionResult> GetSpecialtyStatistics()
+    {
+        var stats = await mediator.Send(
+            new GetSpecialtyStatsQuery());
+        return Ok(GlobalResponse<IEnumerable<SpecialtyStats>>.Success(stats));
+    }
+    
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetAdminStatistics()
+    {
+        var stats = await mediator.Send(
+            new GetAdminStatisticsQuery());
+        return Ok(GlobalResponse<AdminStatistics>.Success(stats));
+    }
+
+    [HttpGet("appointments-today")]
+    public async Task<IActionResult> GetAppointmentsToday([FromQuery] DateTime date)
+    {
+        var appts = await mediator.Send(
+            new GetAppointmentsByDateQuery(date));
+        return Ok(GlobalResponse<IEnumerable<TodayAppointmentResponse>>.Success(appts));
+    }
+
+    [HttpGet("appointment-stats")]
+    public async Task<IActionResult> GetAppointmentStatistics(
+        [FromQuery] StatsPeriod period, 
+        [FromQuery] string? tz = null)
+    {
+        TimeZoneInfo? timeZone = null;
+        
+        if (!string.IsNullOrEmpty(tz))
+        {
+            try
+            {
+                timeZone = TimeZoneInfo.FindSystemTimeZoneById(tz);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return BadRequest("Invalid timezone ID");
+            }
+        }
+        
+        var appts = await mediator.Send(
+            new GetAppointmentStatsQuery(period, timeZone));
+        return Ok(GlobalResponse<AppointmentStats>.Success(appts));
     }
 }

@@ -35,4 +35,13 @@ public class AppointmentRepository(AppDbContext context) : GenericRepository<App
             .Select(a => a.AppointmentTime)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Appointment>> GetByDateAsync(DateTime date)
+    {
+        return await _context.Appointments
+            .Include(a => a.Doctor).ThenInclude(d => d.Profile)
+            .Include(a => a.Doctor).ThenInclude(d => d.Specialty)
+            .Where(a => a.CreatedAt.Date == date.Date)
+            .ToListAsync();
+    }
 }

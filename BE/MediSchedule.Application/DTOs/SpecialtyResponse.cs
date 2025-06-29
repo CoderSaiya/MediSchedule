@@ -1,6 +1,7 @@
 ﻿namespace MediSchedule.Application.DTOs;
 
 public record SpecialtyResponse(
+    Guid Id,
     string Title,
     string Description,
     string Icon,
