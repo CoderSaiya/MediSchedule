@@ -15,6 +15,7 @@ public class DoctorRepository(AppDbContext context) : GenericRepository<Doctor>(
             .Include(d => d.Profile)
             .Include(d => d.Specialty)
             .Include(d => d.Reviews)
+            .Include(d => d.Hospital)
             .ToListAsync();
     }
 
@@ -23,6 +24,7 @@ public class DoctorRepository(AppDbContext context) : GenericRepository<Doctor>(
         return await _context.Doctors
             .Include(d => d.Profile)
             .Include(d => d.Specialty)
+            .Include(d => d.Slots)
             .Where(d => d.Id == id)
             .FirstOrDefaultAsync();
     }
