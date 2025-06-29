@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "VibeTunes", Version = "v1" }));
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MediSchedule", Version = "v1" }));
 
 builder.Services.AddSwaggerGen(c =>
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
