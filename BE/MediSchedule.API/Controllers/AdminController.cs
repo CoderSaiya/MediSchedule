@@ -6,6 +6,7 @@ using MediSchedule.Application.UseCases.Hospitals.Commands;
 using MediSchedule.Application.UseCases.Medicines.Commands;
 using MediSchedule.Application.UseCases.Monitors.Queries;
 using MediSchedule.Application.UseCases.Notifications.Commands;
+using MediSchedule.Application.UseCases.Notifications.Queries;
 using MediSchedule.Application.UseCases.Users.Queries;
 using MediSchedule.Domain.Entities;
 using MediSchedule.Domain.Specifications;
@@ -269,5 +270,13 @@ public class AdminController(IMediator mediator, IHubContext<NotificationHub> hu
             });
         }
         return Ok(new { SentTo = req.DoctorIds.Count });
+    }
+    
+    [HttpGet("notifications")]
+    public async Task<IActionResult> GetNotifications()
+    {
+        var stats = await mediator.Send(
+            new GetNotificationsQuery());
+        return Ok(GlobalResponse<IEnumerable<NotificationResponse>>.Success(stats));
     }
 }
