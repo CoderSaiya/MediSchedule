@@ -76,3 +76,31 @@ export interface Appointment {
 }
 
 export type AppointmentStatus = "pending" | "confirmed" | "completed" | "all"
+
+export interface TodayAppointment {
+    patient: string;
+    doctor: string;
+    phone: string;
+    specialty: string;
+    timeSlot: string;
+    status: string;
+}
+
+export interface AppointmentStats {
+    trends: TrendPoint[];
+    distributions: HourDistribution[];
+    totalInPeriod: number;
+    completionRate: number;
+    averagePerDay: number;
+    cancelRate: number;
+}
+
+interface TrendPoint {
+    label: string;
+    count: number;
+}
+
+interface HourDistribution {
+    hour: number;
+    count: number;
+}

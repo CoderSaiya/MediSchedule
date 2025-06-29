@@ -17,3 +17,14 @@ export interface StatDoctor {
     color: string
     bgColor: string
 }
+
+export interface AdminStats {
+    totalAppointmentsToday: number;
+    appointmentsDeltaPercent: number;
+    pendingToday: number;
+    pendingDeltaPercent: number;
+    completedToday: number;
+    completedDeltaPercent: number;
+    newPatientsToday: number;
+    newPatientsDeltaPercent: number;
+}

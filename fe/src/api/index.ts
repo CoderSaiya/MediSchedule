@@ -1,12 +1,12 @@
 import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError} from "@reduxjs/toolkit/query/react";
 import {RootState} from "@/store";
 import {TokenResponse} from "@/types/auth";
-import type {Response} from "@/types"
+import {AdminStats, Response} from "@/types"
 import { setCredentials, logout } from "@/store/slices/authSlice";
-import {Specialty, SpecialtyWithDoctor} from "@/types/specialty";
+import {Specialty, SpecialtyStats, SpecialtyWithDoctor} from "@/types/specialty";
 import {GetTimeSlotsParams, TimeSlot} from "@/types/slot";
 import {MomoRequest, PaymentData, PaymentStatusResponse} from "@/types/payment";
-import {Appointment, CreateAppointmentRequest} from "@/types/appointment";
+import {Appointment, AppointmentStats, CreateAppointmentRequest, TodayAppointment} from "@/types/appointment";
 import {Doctor} from "@/types/user";
 import {
     CreatePrescriptionRequest,
@@ -298,6 +298,30 @@ export const api = createApi({
                 method: "GET",
             }),
         }),
+        getSpecialtyStats: builder.query<Response<SpecialtyStats[]>, void>({
+            query: () => ({
+                url: `Admin/specialty-stats`,
+                method: "GET",
+            })
+        }),
+        getAdminStats: builder.query<Response<AdminStats>, void>({
+            query: () => ({
+                url: `Admin/stats`,
+                method: "GET",
+            })
+        }),
+        getTodayAppointmentsAdmin: builder.query<Response<TodayAppointment[]>, void>({
+            query: () => ({
+                url: `Admin/appointments-today`,
+                method: "GET",
+            })
+        }),
+        getAppointmentStats: builder.query<Response<AppointmentStats>, number>({
+            query: (period) => ({
+                url: `Admin/appointment-stats?period=${period}`,
+                method: "GET",
+            })
+        }),
     }),
 });
 
@@ -332,4 +356,8 @@ export const {
     useDeleteMedicineMutation,
     useGetAppointmentsByDoctorQuery,
     useGetNotificationsQuery,
+    useGetSpecialtyStatsQuery,
+    useGetAdminStatsQuery,
+    useGetTodayAppointmentsAdminQuery,
+    useGetAppointmentStatsQuery,
 } = api;

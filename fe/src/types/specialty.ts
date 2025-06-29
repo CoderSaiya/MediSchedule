@@ -25,3 +25,9 @@ export interface SpecialtyWithDoctor {
     doctorNames: DoctorDto[];
     amount: number;
 }
+
+export interface SpecialtyStats {
+    name: string;
+    patients: number;
+    percent: number;
+}
