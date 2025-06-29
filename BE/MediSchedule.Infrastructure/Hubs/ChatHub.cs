@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Http.Json;
+using MediSchedule.Domain.Common;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MediSchedule.Infrastructure.Hubs;
@@ -80,7 +81,7 @@ public class ChatHub(IHttpClientFactory httpClientFactory) : Hub
             {
                 Console.WriteLine("[ChatHub] Caller is User => preparing to call Python AI service");
                 var client = httpClientFactory.CreateClient();
-                var pythonUrl = "http://localhost:8000/predict"; 
+                var pythonUrl = "http://localhost:8000/chat"; 
                 
                 // Debug: kiểm tra Python URL trước khi call
                 Console.WriteLine($"[ChatHub] Posting to Python URL: {pythonUrl} with payload message='{content}'");
@@ -90,15 +91,15 @@ public class ChatHub(IHttpClientFactory httpClientFactory) : Hub
                 Console.WriteLine($"[ChatHub] Python returned status code {response.StatusCode}");
                 response.EnsureSuccessStatusCode();
 
-                var aiResult = await response.Content.ReadFromJsonAsync<string>();
+                var aiResult = await response.Content.ReadFromJsonAsync<AiResponse>();
                 if (aiResult == null)
                 {
                     Console.WriteLine("[ChatHub] aiResult deserialized to null");
                     throw new InvalidOperationException("aiResult is null");
                 }
 
-                Console.WriteLine($"[ChatHub] aiResult: ${aiResult}");
-                string botContent = $"{aiResult}";
+                Console.WriteLine($"[ChatHub] aiResult: ${aiResult.Response}");
+                string botContent = $"{aiResult.Response}";
 
                 var payloadAi = new
                 {

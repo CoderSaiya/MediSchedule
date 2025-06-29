@@ -1,8 +1,6 @@
-﻿namespace MediSchedule.Application.DTOs;
+﻿namespace MediSchedule.Domain.Common;
 
 public class AiResponse
 {
-    public string disease_label { get; set; } = string.Empty;
-    public string specialty_title { get; set; } = string.Empty;
-    public double confidence { get; set; }
+    public string Response { get; set; }
 }
