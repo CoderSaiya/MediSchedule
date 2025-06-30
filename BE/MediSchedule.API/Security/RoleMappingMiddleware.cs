@@ -11,7 +11,8 @@ public class RoleMappingMiddleware(
 {
     public async Task InvokeAsync(HttpContext context)
     {
-        var path = context.Request.Path.Value ?? "";
+        var path = context.Request.Path.Value?.ToLowerInvariant() ?? "";
+        logger.LogDebug("PATH:" + path);
         var method = context.Request.Method;
         
         var mapping = mappingService.FindMatching(path, method);
@@ -21,10 +22,11 @@ public class RoleMappingMiddleware(
             return;
         }
         
-        if (!(context.User?.Identity?.IsAuthenticated ?? false))
+        if (context.User.Identity != null && !context.User.Identity.IsAuthenticated)
         {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.CompleteAsync();
+            logger.LogWarning($"Unauthorized access attempt to: {path}");
+            context.Response.StatusCode = 401;
+            await context.Response.WriteAsync("Unauthorized");
             return;
         }
         
