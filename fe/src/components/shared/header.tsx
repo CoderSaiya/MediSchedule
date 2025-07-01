@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Phone, Calendar, Heart } from "lucide-react"
 import Link from "next/link"
+import {DialogTitle} from "@/components/ui/dialog";
 
 export function Header() {
     const [isOpen, setIsOpen] = useState(false)
@@ -22,9 +23,9 @@ export function Header() {
                         </div>
                     </div>
                     <div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-teal-700 to-teal-600 bg-clip-text text-transparent">
-              MediSchedule
-            </span>
+                        <span className="text-2xl font-bold bg-gradient-to-r from-teal-700 to-teal-600 bg-clip-text text-transparent">
+                          MediSchedule
+                        </span>
                         <p className="text-xs text-teal-600 font-medium">Healthcare Platform</p>
                     </div>
                 </Link>
@@ -118,6 +119,7 @@ export function Header() {
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="right" className="w-80 bg-gradient-to-b from-white to-teal-50">
+                        <DialogTitle className="sr-only">Menu điều hướng</DialogTitle>
                         <div className="flex flex-col space-y-6 mt-6">
                             <Link
                                 href="/"
@@ -133,13 +135,24 @@ export function Header() {
                             >
                                 Bác sĩ
                             </Link>
-                            <Link
-                                href="/services"
-                                onClick={() => setIsOpen(false)}
-                                className="text-lg font-medium text-slate-800 hover:text-teal-600 transition-colors"
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false)
+                                    if (window.location.pathname === "/") {
+                                        setTimeout(() => {
+                                            const contactSection = document.querySelector('[data-section="contact"]')
+                                            if (contactSection) {
+                                                contactSection.scrollIntoView({ behavior: "smooth" })
+                                            }
+                                        }, 100)
+                                    } else {
+                                        window.location.href = "/#contact"
+                                    }
+                                }}
+                                className="text-lg text-left font-medium text-slate-800 hover:text-teal-600 transition-colors"
                             >
                                 Dịch vụ
-                            </Link>
+                            </button>
                             <Link
                                 href="/about"
                                 onClick={() => setIsOpen(false)}
@@ -147,13 +160,24 @@ export function Header() {
                             >
                                 Về chúng tôi
                             </Link>
-                            <Link
-                                href="/contact"
-                                onClick={() => setIsOpen(false)}
-                                className="text-lg font-medium text-slate-800 hover:text-teal-600 transition-colors"
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false)
+                                    if (window.location.pathname === "/") {
+                                        setTimeout(() => {
+                                            const contactSection = document.querySelector('[data-section="contact"]')
+                                            if (contactSection) {
+                                                contactSection.scrollIntoView({ behavior: "smooth" })
+                                            }
+                                        }, 100)
+                                    } else {
+                                        window.location.href = "/#contact"
+                                    }
+                                }}
+                                className="text-lg text-left font-medium text-slate-800 hover:text-teal-600 transition-colors"
                             >
                                 Liên hệ
-                            </Link>
+                            </button>
                             <div className="pt-4 border-t border-teal-200">
                                 <div className="bg-teal-50 p-4 rounded-lg mb-4 border border-teal-100">
                                     <div className="flex items-center space-x-3">
