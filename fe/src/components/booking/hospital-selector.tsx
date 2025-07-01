@@ -67,7 +67,7 @@ export function HospitalSelector({ hospitals, selectedHospital, onHospitalSelect
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1">
                             <Input
                                 placeholder="Tìm theo tên bệnh viện, địa chỉ..."
