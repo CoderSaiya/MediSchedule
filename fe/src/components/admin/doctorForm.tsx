@@ -50,11 +50,13 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
                 hospital: doctor.hospital,
                 licenseNumber: doctor.licenseNumber,
                 biography: doctor.biography || '',
-                // day: doctor.slots?.[0]?.day,
-                // time: [
-                //     dayjs(doctor.slots?.[0].startTime, 'HH:mm:ss'),
-                //     dayjs(doctor.slots?.[0].endTime, 'HH:mm:ss'),
-                // ],
+                slots: doctor.slots?.map(slot => ({
+                    day: String(slot.day),
+                    time: [
+                        dayjs(slot.startTime, 'HH:mm:ss'),
+                        dayjs(slot.endTime, 'HH:mm:ss')
+                    ]
+                })) || []
             });
             if (doctor.image) {
                 setFileList([{
@@ -154,14 +156,15 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
                 formData.append('Password', values.password);
             }
 
-            const foundSpec = specialties.find(s => s.title === values.specialty);
+            const foundSpec = specialties.find(s => s.id === values.specialty);
+            console.log(values.specialty)
             const specialtyId = foundSpec ? foundSpec.id : undefined;
             if (!specialtyId) {
                 console.warn('Không tìm thấy ID chuyên khoa cho tên:', values.specialty);
             }
             formData.append('SpecialtyId', specialtyId as string);
 
-            const foundHosp = hospitals.find(h => h.name === values.hospital);
+            const foundHosp = hospitals.find(h => h.id === values.hospital);
             const hospitalId = foundHosp ? foundHosp.id : undefined;
             if (!hospitalId) {
                 console.warn('Không tìm thấy ID bệnh viện cho tên:', values.hospital);
