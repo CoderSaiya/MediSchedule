@@ -277,40 +277,40 @@ export default function DoctorDashboard() {
                             </Card>
 
                             {/* Recent Notifications */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center space-x-2">
-                                        <Bell className="h-5 w-5 text-teal-600" />
-                                        <span>Thông báo</span>
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium">Lịch hẹn mới</p>
-                                            <p className="text-xs text-gray-600">Bệnh nhân Nguyễn Văn F đặt lịch 14:00</p>
-                                            <p className="text-xs text-gray-500">5 phút trước</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg">
-                                        <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium">Nhắc nhở</p>
-                                            <p className="text-xs text-gray-600">Cập nhật hồ sơ bệnh án cho bệnh nhân Trần Thị B</p>
-                                            <p className="text-xs text-gray-500">15 phút trước</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium">Hoàn thành</p>
-                                            <p className="text-xs text-gray-600">Đã khám xong cho bệnh nhân Lê Minh C</p>
-                                            <p className="text-xs text-gray-500">30 phút trước</p>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            {/*<Card>*/}
+                            {/*    <CardHeader>*/}
+                            {/*        <CardTitle className="flex items-center space-x-2">*/}
+                            {/*            <Bell className="h-5 w-5 text-teal-600" />*/}
+                            {/*            <span>Thông báo</span>*/}
+                            {/*        </CardTitle>*/}
+                            {/*    </CardHeader>*/}
+                            {/*    <CardContent className="space-y-3">*/}
+                            {/*        <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">*/}
+                            {/*            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>*/}
+                            {/*            <div className="flex-1">*/}
+                            {/*                <p className="text-sm font-medium">Lịch hẹn mới</p>*/}
+                            {/*                <p className="text-xs text-gray-600">Bệnh nhân Nguyễn Văn F đặt lịch 14:00</p>*/}
+                            {/*                <p className="text-xs text-gray-500">5 phút trước</p>*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
+                            {/*        <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg">*/}
+                            {/*            <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>*/}
+                            {/*            <div className="flex-1">*/}
+                            {/*                <p className="text-sm font-medium">Nhắc nhở</p>*/}
+                            {/*                <p className="text-xs text-gray-600">Cập nhật hồ sơ bệnh án cho bệnh nhân Trần Thị B</p>*/}
+                            {/*                <p className="text-xs text-gray-500">15 phút trước</p>*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
+                            {/*        <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">*/}
+                            {/*            <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>*/}
+                            {/*            <div className="flex-1">*/}
+                            {/*                <p className="text-sm font-medium">Hoàn thành</p>*/}
+                            {/*                <p className="text-xs text-gray-600">Đã khám xong cho bệnh nhân Lê Minh C</p>*/}
+                            {/*                <p className="text-xs text-gray-500">30 phút trước</p>*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
+                            {/*    </CardContent>*/}
+                            {/*</Card>*/}
                         </div>
                     </div>
                 </TabsContent>

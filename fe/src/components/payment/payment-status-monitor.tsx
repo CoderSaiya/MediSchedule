@@ -34,15 +34,13 @@ export function PaymentStatusMonitor({
         if (statusResponse && !paymentSuccessTriggered) {
             console.log("Payment status response:", statusResponse)
 
-            // Reset retry count on successful response
             setRetryCount(0)
-            setPollingInterval(2000) // Reset to 2 seconds
+            setPollingInterval(2000)
 
-            // Handle the actual response format from backend
             if (statusResponse.status === "success") {
                 // Payment successful - stop polling and trigger callback only once
                 console.log("✅ Payment successful! Triggering success callback...")
-                setPollingInterval(0) // Stop polling
+                setPollingInterval(0)
                 setPaymentSuccessTriggered(true)
                 onPaymentSuccess()
             } else if (statusResponse.status === "processing" || statusResponse.status === "pending") {
@@ -55,7 +53,7 @@ export function PaymentStatusMonitor({
             } else if (statusResponse.status === "failed") {
                 // Payment failed
                 console.log("❌ Payment failed:", statusResponse.message)
-                setPollingInterval(0) // Stop polling
+                setPollingInterval(0)
                 onPaymentFailed(statusResponse.message || "Thanh toán thất bại")
             }
         }
@@ -105,5 +103,5 @@ export function PaymentStatusMonitor({
         }
     }, [enabled, orderId, pollingInterval, paymentSuccessTriggered])
 
-    return null // This is a monitoring component, no UI
+    return null
 }

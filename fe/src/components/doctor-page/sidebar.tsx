@@ -40,13 +40,13 @@ export default function Sidebar({ doctorInfo }: DoctorSidebarProps) {
             href: "/doctor/appointments",
             badge: "5",
         },
-        {
-            id: "schedule",
-            label: "Lịch làm việc",
-            icon: Clock,
-            href: "/doctor/schedule",
-            badge: null,
-        },
+        // {
+        //     id: "schedule",
+        //     label: "Lịch làm việc",
+        //     icon: Clock,
+        //     href: "/doctor/schedule",
+        //     badge: null,
+        // },
         // {
         //     id: "reports",
         //     label: "Báo cáo",

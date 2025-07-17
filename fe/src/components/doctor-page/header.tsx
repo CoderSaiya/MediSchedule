@@ -79,25 +79,19 @@ export default function Header({ doctorInfo }: DoctorHeaderProps) {
 
         return (
             <div className="space-y-1 max-h-80 overflow-y-auto">
-                {notifications.map((notif: NotificationMessage, idx) => (
+                {notifications.map((notif, idx) => (
                     <div
-                        key={`${notif.timestamp}-${idx}`}
+                        key={`${notif.createdAt}-${idx}`}
                         className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
                         onClick={() => handleNotificationClick(idx)}
                     >
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 break-words">
                                 {notif.content}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                                {new Date(notif.timestamp).toLocaleString("vi-VN", {
-                                    year: 'numeric',
-                                    month: '2-digit',
-                                    day: '2-digit',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
+                                {notif.createdAt}
                             </p>
                         </div>
                     </div>

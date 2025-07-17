@@ -7,6 +7,7 @@ import {Notification} from "@/types/notification";
 export interface NotificationMessage {
     content: string;
     timestamp: string;
+    createdAt: string;
     from?: string;
     fromConnectionId?: string;
 }
@@ -64,7 +65,7 @@ export function useNotificationHub(doctorId: string | null | undefined) {
                 console.log("Received notification:", payload);
                 const msg: Notification = {
                     content: payload.Content || payload.content,
-                    createdAt: payload.CreatedAt || payload.createdAt || new Date().toISOString(),
+                    createdAt: payload.CreatedAt || payload.createdAt,
                     recipient: payload.Recipient || payload.recipient,
                     notificationType: payload.NotificationType || payload.notificationType,
                     id: payload.Id || payload.id,

@@ -106,7 +106,7 @@ export const api = createApi({
                 body: request,
             }),
         }),
-        checkPaymentStatus: builder.query<Response<PaymentStatusResponse>, string>({
+        checkPaymentStatus: builder.query<PaymentStatusResponse, string>({
             query: (orderId) => ({
                 url: `Payment/status/${orderId}`,
                 method: "GET",

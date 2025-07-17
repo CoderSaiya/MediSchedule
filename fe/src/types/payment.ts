@@ -13,6 +13,7 @@ export interface PaymentStatusResponse {
     orderInfo?: string
     payType?: string
     transTime?: string
+    status: string
 }
 
 export interface PaymentData {

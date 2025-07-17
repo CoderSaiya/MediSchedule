@@ -11,7 +11,7 @@ import { PaymentStatusMonitor } from "@/components/payment/payment-status-monito
 import { ReceiptGenerator } from "@/components/payment/receipt-generator"
 import { useCreateMomoPaymentMutation, useCreateAppointmentMutation } from "@/api"
 import { formatVND } from "@/lib/formatAmout"
-import {AppointmentData} from "@/types/appointment";
+import {AppointmentData, BookingData} from "@/types/appointment";
 import {PaymentData} from "@/types/payment";
 
 type PaymentStatus = "pending" | "processing" | "success" | "failed"
@@ -222,6 +222,21 @@ export default function PaymentPage() {
     }
 
     if (paymentStatus === "success") {
+        const converted: BookingData = {
+            appointmentId: bookingData!.appointmentId,
+            appointmentCode: bookingData!.appointmentCode,
+            patientName: bookingData!.fullName,
+            patientPhone: bookingData!.phone,
+            patientEmail: bookingData!.email,
+            doctorName: bookingData!.doctor,
+            specialty: bookingData!.specialty,
+            appointmentDate: bookingData!.date,
+            appointmentTime: bookingData!.time,
+            symptoms: bookingData!.symptoms,
+            amount: bookingData!.totalAmount,
+            orderId: bookingData!.orderId,
+        };
+
         return (
             <div className="m-20">
                 <div data-receipt-section className="max-w-4xl mx-auto">
@@ -236,17 +251,7 @@ export default function PaymentPage() {
                     </div>
 
                     <ReceiptGenerator
-                        bookingData={{
-                            ...bookingData,
-                            doctorName: bookingData?.doctor,
-                            patientName: bookingData?.fullName,
-                            patientPhone: bookingData?.phone,
-                            patientEmail: bookingData?.email,
-                            appointmentDate: bookingData?.date,
-                            appointmentTime: bookingData?.time,
-                            amount: getTotalAmount(),
-                            orderId: paymentData?.orderId,
-                        }}
+                        bookingData={converted}
                         onUploadComplete={handleReceiptUpload}
                     />
 
