@@ -10,6 +10,7 @@ export interface GetTimeSlotsParams {
 }
 
 export interface Slot {
+    id?: string;
     day: string;
     startTime: string;
     endTime: string;

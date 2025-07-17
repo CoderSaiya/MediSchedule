@@ -41,16 +41,20 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
 
     useEffect(() => {
         if (doctor) {
+            const matchedSpecialty = specialties.find(s => s.title === doctor.specialty);
+            const matchedHospital = hospitals.find(h => h.name === doctor.hospital);
+
             form.setFieldsValue({
-                fullName: doctor.name,
+                fullName: doctor.name.replace(/^(BS\.?\s*)+/gi, '').trim(),
                 username: doctor.username,
                 password: '',
                 email: doctor.email,
-                specialty: doctor.specialty ,
-                hospital: doctor.hospital,
+                specialty: matchedSpecialty?.id,
+                hospital: matchedHospital?.id,
                 licenseNumber: doctor.licenseNumber,
                 biography: doctor.biography || '',
                 slots: doctor.slots?.map(slot => ({
+                    id: slot.id,
                     day: String(slot.day),
                     time: [
                         dayjs(slot.startTime, 'HH:mm:ss'),
@@ -72,7 +76,7 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
             form.resetFields();
             setFileList([]);
         }
-    }, [doctor, form]);
+    }, [doctor, form, specialties, hospitals]);
 
     const beforeUpload = () => false;
 
@@ -105,7 +109,9 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
                 }
             }
 
-            const slots: { day: string; time: [dayjs.Dayjs, dayjs.Dayjs] }[] = values.slots || [];
+            const slots: {
+                id: string;
+                day: string; time: [dayjs.Dayjs, dayjs.Dayjs] }[] = values.slots || [];
             if (slots.length === 0) {
                 message.error('Vui lòng thêm ít nhất một lịch làm việc');
                 return;
@@ -147,7 +153,10 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
             if (doctor) {
                 formData.append('DoctorId', doctor.id);
             }
-            formData.append('FullName', values.fullName.trim());
+            formData.append(
+                'FullName',
+                values.fullName.replace(/^BS\\.\\s*/i, '').trim()
+            );
             if (!doctor) {
                 formData.append('Username', values.username.trim());
                 formData.append('Email', values.email.trim());
@@ -157,7 +166,6 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
             }
 
             const foundSpec = specialties.find(s => s.id === values.specialty);
-            console.log(values.specialty)
             const specialtyId = foundSpec ? foundSpec.id : undefined;
             if (!specialtyId) {
                 console.warn('Không tìm thấy ID chuyên khoa cho tên:', values.specialty);
@@ -182,7 +190,10 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
             }
 
             slots.forEach((s, idx) => {
-                formData.append(`Slots[${idx}].Day`, String(s.day));
+                if (s.id) {
+                    formData.append(`Slots[${idx}].Id`, s.id);
+                }
+                formData.append(`Slots[${idx}].Day`, Number(s.day).toString());
                 formData.append(`Slots[${idx}].StartTime`, s.time[0].format('HH:mm:ss'));
                 formData.append(`Slots[${idx}].EndTime`, s.time[1].format('HH:mm:ss'));
             });
@@ -330,6 +341,15 @@ const DoctorForm: React.FC<DoctorFormProps> = ({ doctor, onSuccess, onCancel }) 
                                         style={{ display: 'flex', marginBottom: 8 }}
                                         align="baseline"
                                     >
+                                        <Form.Item
+                                            {...field}
+                                            name={[field.name, 'id']}
+                                            fieldKey={[field.fieldKey, 'id']}
+                                            hidden
+                                        >
+                                            <Input />
+                                        </Form.Item>
+
                                         <Form.Item
                                             {...field}
                                             name={[field.name, 'day']}
